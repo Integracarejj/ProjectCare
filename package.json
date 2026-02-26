@@ -1,0 +1,16 @@
+{
+  "name": "projectcare",
+  "private": true,
+  "version": "0.1.0",
+  "description": "ProjectCare monorepo (web + api + shared)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": "20.x"
+  },
+  "scripts": {
+    "typecheck": "echo \"typecheck wired later\""
+  }
+}
