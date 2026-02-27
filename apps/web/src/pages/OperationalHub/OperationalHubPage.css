@@ -1,40 +1,45 @@
 /* ==========================================================================
-   OperationalHubPage layout (2-column)
-   --------------------------------------------------------------------------
-   GOAL: Calm + structured. Main work left. Signal/actions right.
-   Not busy. Not a wall of widgets.
+   OperationalHubPage layout (centered, 2-column)
    ========================================================================== */
+
+.hub {
+    width: 100%;
+}
+
+/* White page surface so content is not floating on app gray */
+.hub__surface {
+    background: var(--pc-bg-surface);
+    border-radius: var(--pc-radius-lg);
+    box-shadow: 0 0 0 1px rgba(17, 24, 39, 0.04);
+}
 
 .hub__topNote {
     margin-bottom: var(--pc-space-4);
 }
 
-/* Grid: full-width row on top, then 2 columns (main + rail) */
+/* Grid:
+   - top row spans both columns
+   - bottom row is two equal columns
+*/
 .hub__grid {
     display: grid;
-    grid-template-columns: 1fr 340px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--pc-space-6);
     align-items: start;
 }
 
 .hub__rowFull {
     grid-column: 1 / -1;
-    /* span both columns */
 }
 
-.hub__main {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pc-space-6);
-}
-
+.hub__main,
 .hub__rail {
     display: flex;
     flex-direction: column;
     gap: var(--pc-space-6);
 }
 
-/* Responsive: collapse to single column on smaller screens */
+/* Responsive */
 @media (max-width: 980px) {
     .hub__grid {
         grid-template-columns: 1fr;
@@ -42,6 +47,5 @@
 
     .hub__rail {
         order: 3;
-        /* rail goes below main */
     }
 }

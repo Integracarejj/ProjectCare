@@ -72,3 +72,8 @@
     /* disabled for now */
     opacity: 0.7;
 }
+
+.yourFocus__item--blocked {
+    border-color: var(--pc-accent-rose-border);
+    background: var(--pc-accent-rose-bg);
+}

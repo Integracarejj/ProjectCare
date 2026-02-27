@@ -1,0 +1,82 @@
+/* ==========================================================================
+   MyProjectsSection styles
+   Right-rail launchpad: makes it obvious where projects are.
+   ========================================================================== */
+
+.myProjects__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pc-space-2);
+}
+
+.myProjects__card {
+    margin-top: var(--pc-space-3);
+    padding: var(--pc-space-4);
+}
+
+.myProjects__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--pc-space-3);
+}
+
+.myProjects__item {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--pc-space-3);
+    padding: var(--pc-space-3);
+    border: 1px solid var(--pc-border-subtle);
+    border-radius: var(--pc-radius-sm);
+    background: var(--pc-bg-surface);
+}
+
+.myProjects__name {
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.myProjects__note {
+    margin-top: var(--pc-space-1);
+    font-size: 12px;
+    max-width: 34ch;
+}
+
+.myProjects__rag {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 999px;
+    align-self: start;
+    border: 1px solid var(--pc-border-subtle);
+}
+
+/* Pastel RAG chips */
+.myProjects__rag--Green {
+    background: var(--pc-accent-mint-bg);
+    border-color: var(--pc-accent-mint-border);
+}
+
+.myProjects__rag--Yellow {
+    background: var(--pc-accent-amber-bg);
+    border-color: var(--pc-accent-amber-border);
+}
+
+.myProjects__rag--Red {
+    background: var(--pc-accent-rose-bg);
+    border-color: var(--pc-accent-rose-border);
+}
+
+.myProjects__viewAll {
+    margin-top: var(--pc-space-3);
+    width: 100%;
+    padding: var(--pc-space-2) var(--pc-space-3);
+    border-radius: var(--pc-radius-sm);
+    border: 1px solid var(--pc-border-subtle);
+    background: var(--pc-bg-surface);
+    font-weight: 700;
+    cursor: not-allowed;
+    opacity: 0.8;
+}

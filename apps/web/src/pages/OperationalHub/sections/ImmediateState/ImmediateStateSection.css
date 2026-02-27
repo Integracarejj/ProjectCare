@@ -16,6 +16,8 @@
     cursor: pointer;
     /* later: clickable drilldown */
     transition: transform 120ms ease, box-shadow 120ms ease;
+    border: 1px solid var(--pc-border-subtle);
+    border-radius: var(--pc-radius-md)
 }
 
 .immediateState__card:hover {

@@ -12,7 +12,7 @@
  */
 import './YourFocusSection.css'
 
-type FocusTask = {
+export type FocusTask = {
     id: string
     projectName: string
     title: string
@@ -20,14 +20,8 @@ type FocusTask = {
     status: 'Not Started' | 'In Progress' | 'Blocked' | 'Complete'
 }
 
-// Stub tasks so the layout feels real without inventing product logic.
-const stubTasks: FocusTask[] = [
-    // Intentionally empty to keep it calm at first.
-    // Add a few sample tasks later if you want to see density.
-]
-
-export function YourFocusSection() {
-    const grouped = groupByProject(stubTasks)
+export function YourFocusSection({ tasks }: { tasks: FocusTask[] }) {
+    const grouped = groupByProject(tasks)
 
     return (
         <section className="yourFocus">
@@ -46,13 +40,13 @@ export function YourFocusSection() {
                     </div>
                 ) : (
                     <div className="yourFocus__groups">
-                        {Object.entries(grouped).map(([projectName, tasks]) => (
+                        {Object.entries(grouped).map(([projectName, projectTasks]) => (
                             <div key={projectName} className="yourFocus__group">
                                 <div className="yourFocus__groupTitle">{projectName}</div>
 
                                 <ul className="yourFocus__list">
-                                    {tasks.map((t) => (
-                                        <li key={t.id} className="yourFocus__item">
+                                    {projectTasks.map((t) => (
+                                        <li key={t.id} className={`yourFocus__item ${t.status === 'Blocked' ? 'yourFocus__item--blocked' : ''}`}>
                                             <div className="yourFocus__itemMain">
                                                 <div className="yourFocus__itemTitle">{t.title}</div>
                                                 <div className="yourFocus__itemMeta pc-muted">
@@ -60,7 +54,6 @@ export function YourFocusSection() {
                                                 </div>
                                             </div>
 
-                                            {/* later: quick actions (complete/comment) */}
                                             <button className="yourFocus__itemBtn" type="button" disabled>
                                                 Open
                                             </button>

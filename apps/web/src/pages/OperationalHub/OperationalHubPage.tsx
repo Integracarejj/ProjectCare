@@ -16,53 +16,68 @@
  * - What Changed: activity stream since last visit (audit/events).
  */
 import './OperationalHubPage.css'
-
 import { ImmediateStateSection } from './sections/ImmediateState/ImmediateStateSection'
-import { YourFocusSection } from './sections/YourFocus/YourFocusSection'
-import { WhatChangedSection } from './sections/WhatChanged/WhatChangedSection'
-import { QuickActionsSection } from './sections/QuickActions/QuickActionsSection'
+import { YourFocusSection, type FocusTask } from './sections/YourFocus/YourFocusSection'
+import { MyProjectsSection, type MyProject } from './sections/MyProjects/MyProjectsSection'
 
 export function OperationalHubPage() {
-    // "Today indicator" makes the page feel alive (per your attachment).
-    // In the real app, counts will come from API. For now: stub data.
     const todayLabel = new Date().toLocaleDateString(undefined, {
         weekday: 'long',
         month: 'short',
         day: 'numeric',
     })
 
-    // Stub "summary counts" for the top row cards.
-    // Replace later with API calls that compute these from DB.
-    const summary = {
-        needsAttention: 0,  // overdue + blocked items
-        dueThisWeek: 0,     // due in next 7 days (high priority later)
-        atRiskProjects: 0,  // RAG yellow/red
-        overallHealthPct: 100, // placeholder
-    }
+    // Sample data (transitional — API later)
+    const projects: MyProject[] = [
+        { id: 'p1', name: 'RePlatform (WelcomeHome)', rag: 'Yellow', note: '2 overdue tasks • next milestone in 8 days' },
+        { id: 'p2', name: 'Ops Tools 101', rag: 'Green', note: 'On track • 0 blockers' },
+        { id: 'p3', name: 'Budget Portal MVP', rag: 'Red', note: 'Blocked dependency • needs decision' },
+    ]
+
+    const focusTasks: FocusTask[] = [
+        { id: 't1', projectName: 'RePlatform (WelcomeHome)', title: 'Confirm data migration field mapping', dueLabel: 'Overdue (2d)', status: 'Blocked' },
+        { id: 't2', projectName: 'RePlatform (WelcomeHome)', title: 'Draft pilot wave communication to communities', dueLabel: 'Tomorrow', status: 'In Progress' },
+        { id: 't3', projectName: 'Budget Portal MVP', title: 'Finalize KPI definitions for dashboard', dueLabel: 'Fri', status: 'Not Started' },
+        { id: 't4', projectName: 'Ops Tools 101', title: 'Review training checklist and publish', dueLabel: 'Next week', status: 'Not Started' },
+    ]
+
+    const needsAttention =
+        focusTasks.filter(t => t.status === 'Blocked' || t.dueLabel.startsWith('Overdue')).length
+
+    const dueThisWeek =
+        focusTasks.filter(t => ['Tomorrow', 'Fri'].includes(t.dueLabel)).length
+
+    const atRiskProjects = projects.filter(p => p.rag !== 'Green').length
+
+    const overallHealthPct = Math.round(
+        (projects.filter(p => p.rag === 'Green').length / projects.length) * 100
+    )
+
+    const summary = { needsAttention, dueThisWeek, atRiskProjects, overallHealthPct }
 
     return (
         <div className="hub">
-            <div className="hub__topNote pc-muted">
-                <strong>Today:</strong> {todayLabel} — {summary.needsAttention} items need attention
-            </div>
-
-            <div className="hub__grid">
-                {/* Full-width top row: 4 calm "Immediate State" cards */}
-                <div className="hub__rowFull">
-                    <ImmediateStateSection summary={summary} />
+            <div className="pc-container hub__surface">
+                <div className="hub__topNote pc-muted">
+                    <strong>Today:</strong> {todayLabel} — {summary.needsAttention} items need attention
                 </div>
 
-                {/* Left (main): Your Focus takes most vertical space */}
-                <div className="hub__main">
-                    <YourFocusSection />
-                </div>
+                <div className="hub__grid">
+                    <div className="hub__rowFull">
+                        <ImmediateStateSection summary={summary} />
+                    </div>
 
-                {/* Right rail: signal + actions */}
-                <aside className="hub__rail">
-                    <WhatChangedSection />
-                    <QuickActionsSection />
-                </aside>
+                    <div className="hub__main">
+                        <YourFocusSection tasks={focusTasks} />
+                    </div>
+
+                    <aside className="hub__rail">
+                        <MyProjectsSection projects={projects} />
+                    </aside>
+                </div>
             </div>
         </div>
     )
+
+
 }

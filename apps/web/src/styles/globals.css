@@ -2,51 +2,52 @@
    ProjectCare Global Styles (NO Tailwind)
    --------------------------------------------------------------------------
    PURPOSE:
-   - This file defines the "design tokens" for the entire app (colors, spacing,
-     typography, radii, shadows).
-   - If you ever want to tweak a global color, spacing, or font: start here.
-   - Page/component CSS files should USE these variables, not invent new ones.
-
+   - Defines design tokens for the entire app (colors, spacing, typography, radii, shadows)
+   - Base element defaults live here
    RULES:
    - Keep tokens in :root
    - Keep base element defaults here (body, headings, links)
    - Keep layout utilities minimal and obvious
+   - NO page-specific selectors here (e.g. .hub__*, .OperationalHub*, etc.)
    ========================================================================== */
 
 :root {
-    /* ===== Color System =======================================================
-     Naming convention:
-     - --pc-* = ProjectCare token
-     - background tokens start with --pc-bg-
-     - text tokens start with --pc-text-
-     - border tokens start with --pc-border-
-     - action tokens start with --pc-action-
-  ========================================================================= */
+    /* ===== Color System ===================================================== */
 
-    /* App surfaces */
-    --pc-bg-app: #f7f8fa;
     /* overall app background */
     --pc-bg-surface: #ffffff;
     /* cards, panels */
 
-    /* Text */
     --pc-text-primary: #111827;
     /* near-black for readability */
     --pc-text-secondary: #6b7280;
     --pc-text-on-accent: #ffffff;
+    --pc-text-heading: #0b1220;
+    /* headings slightly softer than pure black */
 
-    /* Borders */
     --pc-border-subtle: #e5e7eb;
 
-    /* Actions (buttons, links) */
     --pc-action-primary: #2563eb;
     --pc-action-primary-hover: #1d4ed8;
 
-    /* Status colors (used later for task status chips, etc.) */
+    /* Status colors (used later for chips, etc.) */
     --pc-status-todo: #64748b;
     --pc-status-inprogress: #1e88e5;
     --pc-status-blocked: #b91c1c;
     --pc-status-complete: #16a34a;
+
+    /* ===== Pastel accents (subtle, enterprise-friendly) ===================== */
+    --pc-accent-blue-bg: #eef5ff;
+    --pc-accent-blue-border: #cfe2ff;
+
+    --pc-accent-amber-bg: #fff7e6;
+    --pc-accent-amber-border: #ffe1b3;
+
+    --pc-accent-rose-bg: #fff1f4;
+    --pc-accent-rose-border: #ffd0da;
+
+    --pc-accent-mint-bg: #effbf3;
+    --pc-accent-mint-border: #c9f0d6;
 
     /* ===== Spacing Scale (4px base) ========================================= */
     --pc-space-1: 4px;
@@ -63,21 +64,19 @@
     --pc-radius-lg: 14px;
 
     /* ===== Shadows ========================================================== */
-    --pc-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.06);
+    /* Calm default card shadow */
+    --pc-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 20px rgba(17, 24, 39, 0.04);
 
     /* ===== Typography ======================================================= */
     --pc-font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-
-    /* Line-height defaults */
     --pc-lineheight-body: 1.4;
     --pc-lineheight-heading: 1.2;
 
     /* Container width (keeps pages from becoming ultra-wide) */
-    --pc-page-max-width: 1200px;
+    --pc-page-max-width: 1440px;
 }
 
 /* ===== Base element defaults ============================================== */
-
 html,
 body {
     height: 100%;
@@ -88,10 +87,10 @@ body {
     font-family: var(--pc-font-sans);
     line-height: var(--pc-lineheight-body);
     color: var(--pc-text-primary);
-    background: var(--pc-bg-app);
+    background: #ffffff;
 }
 
-/* Make links obvious and consistent */
+/* Links */
 a {
     color: var(--pc-action-primary);
     text-decoration: none;
@@ -102,7 +101,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* A simple, reusable "card" pattern used all over the app */
+/* ===== Reusable primitives ================================================ */
 .pc-card {
     background: var(--pc-bg-surface);
     border: 1px solid var(--pc-border-subtle);
@@ -110,25 +109,51 @@ a:hover {
     box-shadow: var(--pc-shadow-card);
 }
 
-/* A simple container that keeps content readable */
+/* Canonical centered page container */
 .pc-container {
     max-width: var(--pc-page-max-width);
     margin: 0 auto;
     padding: var(--pc-space-6);
 }
 
-/* ===== Small global text helpers ===========================================
-   These are intentionally tiny primitives used across pages/sections.
-   They prevent repeated "same exact CSS" everywhere.
-   ========================================================================== */
-
+/* Small global text helpers (intentionally tiny) */
 .pc-sectionTitle {
     margin: 0;
     font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.2px;
+    color: var(--pc-text-heading);
 }
 
 .pc-muted {
     color: var(--pc-text-secondary);
+}
+
+/* ===== Pastel variants (UPDATED: border accent, not full fills) ============
+   These are used to add subtle status tone without overpowering the page.
+   This change specifically supports the "Immediate State" cards direction.
+   ========================================================================== */
+
+.pc-card--tintBlue {
+    background: var(--pc-bg-surface);
+    border-color: var(--pc-border-subtle);
+    border-left: 4px solid var(--pc-accent-blue-border);
+}
+
+.pc-card--tintAmber {
+    background: var(--pc-bg-surface);
+    border-color: var(--pc-border-subtle);
+    border-left: 4px solid var(--pc-accent-amber-border);
+}
+
+.pc-card--tintRose {
+    background: var(--pc-bg-surface);
+    border-color: var(--pc-border-subtle);
+    border-left: 4px solid var(--pc-accent-rose-border);
+}
+
+.pc-card--tintMint {
+    background: var(--pc-bg-surface);
+    border-color: var(--pc-border-subtle);
+    border-left: 4px solid var(--pc-accent-mint-border);
 }

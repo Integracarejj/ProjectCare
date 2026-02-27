@@ -26,25 +26,25 @@ export function ImmediateStateSection({ summary }: { summary: Summary }) {
             <h2 className="pc-sectionTitle">Immediate State</h2>
 
             <div className="immediateState__grid">
-                <div className="immediateState__card pc-card">
+                <div className="immediateState__card pc-card--tintRose">
                     <div className="immediateState__label">Needs Attention</div>
                     <div className="immediateState__value">{summary.needsAttention}</div>
                     <div className="immediateState__hint pc-muted">Overdue + blocked items</div>
                 </div>
 
-                <div className="immediateState__card pc-card">
+                <div className="immediateState__card pc-card--tintAmber">
                     <div className="immediateState__label">Due This Week</div>
                     <div className="immediateState__value">{summary.dueThisWeek}</div>
                     <div className="immediateState__hint pc-muted">Next 7 days</div>
                 </div>
 
-                <div className="immediateState__card pc-card">
+                <div className="immediateState__card pc-card--tintBlue">
                     <div className="immediateState__label">At Risk Projects</div>
                     <div className="immediateState__value">{summary.atRiskProjects}</div>
                     <div className="immediateState__hint pc-muted">RAG: Yellow/Red</div>
                 </div>
 
-                <div className="immediateState__card pc-card">
+                <div className="immediateState__card pc-card--tintMint">
                     <div className="immediateState__label">Overall Health</div>
                     <div className="immediateState__value">{summary.overallHealthPct}%</div>
                     <div className="immediateState__hint pc-muted">On-track indicator</div>
