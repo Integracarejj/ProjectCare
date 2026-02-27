@@ -1,0 +1,52 @@
+/* ==========================================================================
+   ProjectsPage styles
+   This file controls visuals for the Projects landing page only.
+   If you want to change global colors/spacing, go to styles/globals.css.
+   ========================================================================== */
+
+.projectsPage__header {
+    margin-bottom: var(--pc-space-5);
+}
+
+.projectsPage__title {
+    margin: 0;
+    line-height: var(--pc-lineheight-heading);
+    font-size: 28px;
+}
+
+.projectsPage__subtitle {
+    margin: var(--pc-space-2) 0 0 0;
+    color: var(--pc-text-secondary);
+}
+
+.projectsPage__content {
+    padding: var(--pc-space-6);
+}
+
+.projectsPage__empty {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pc-space-3);
+}
+
+.projectsPage__emptyTitle {
+    font-weight: 700;
+}
+
+.projectsPage__emptyBody {
+    color: var(--pc-text-secondary);
+    max-width: 60ch;
+}
+
+.projectsPage__primaryButton {
+    width: fit-content;
+    padding: var(--pc-space-2) var(--pc-space-4);
+    border-radius: var(--pc-radius-sm);
+    border: 1px solid var(--pc-border-subtle);
+    background: var(--pc-action-primary);
+    color: var(--pc-text-on-accent);
+    font-weight: 600;
+    cursor: not-allowed;
+    /* disabled for now */
+    opacity: 0.65;
+}

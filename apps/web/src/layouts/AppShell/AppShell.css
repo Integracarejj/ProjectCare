@@ -1,0 +1,51 @@
+/* ==========================================================================
+   AppShell styles
+   Controls the top-level layout of the app (header + main content).
+   Uses global tokens from src/styles/globals.css.
+   ========================================================================== */
+
+.appShell {
+    min-height: 100vh;
+}
+
+/* Header is a "card" so it feels elevated above the page background */
+.appShell__header {
+    border-radius: 0;
+    /* header spans full width; no rounded corners */
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+
+.appShell__headerInner {
+    /* pc-container already provides padding; we only handle layout here */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--pc-space-6);
+}
+
+.appShell__brand {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pc-space-1);
+}
+
+.appShell__brandName {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.appShell__brandTag {
+    font-size: 12px;
+    color: var(--pc-text-secondary);
+}
+
+.appShell__pageTitle {
+    font-weight: 600;
+    color: var(--pc-text-primary);
+}
+
+.appShell__main {
+    padding-top: var(--pc-space-6);
+}

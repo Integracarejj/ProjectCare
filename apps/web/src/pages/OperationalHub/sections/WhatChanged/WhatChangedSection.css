@@ -1,0 +1,42 @@
+/* ==========================================================================
+   WhatChangedSection styles
+   Small, quiet signal panel. Not a chaotic social feed.
+   ========================================================================== */
+
+.whatChanged__card {
+    margin-top: var(--pc-space-3);
+    padding: var(--pc-space-4);
+}
+
+.whatChanged__empty {
+    font-size: 13px;
+}
+
+.whatChanged__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--pc-space-3);
+}
+
+.whatChanged__item {
+    padding-bottom: var(--pc-space-3);
+    border-bottom: 1px solid var(--pc-border-subtle);
+}
+
+.whatChanged__item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.whatChanged__label {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.whatChanged__time {
+    margin-top: var(--pc-space-1);
+    font-size: 12px;
+}

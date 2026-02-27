@@ -1,0 +1,134 @@
+/* ==========================================================================
+   ProjectCare Global Styles (NO Tailwind)
+   --------------------------------------------------------------------------
+   PURPOSE:
+   - This file defines the "design tokens" for the entire app (colors, spacing,
+     typography, radii, shadows).
+   - If you ever want to tweak a global color, spacing, or font: start here.
+   - Page/component CSS files should USE these variables, not invent new ones.
+
+   RULES:
+   - Keep tokens in :root
+   - Keep base element defaults here (body, headings, links)
+   - Keep layout utilities minimal and obvious
+   ========================================================================== */
+
+:root {
+    /* ===== Color System =======================================================
+     Naming convention:
+     - --pc-* = ProjectCare token
+     - background tokens start with --pc-bg-
+     - text tokens start with --pc-text-
+     - border tokens start with --pc-border-
+     - action tokens start with --pc-action-
+  ========================================================================= */
+
+    /* App surfaces */
+    --pc-bg-app: #f7f8fa;
+    /* overall app background */
+    --pc-bg-surface: #ffffff;
+    /* cards, panels */
+
+    /* Text */
+    --pc-text-primary: #111827;
+    /* near-black for readability */
+    --pc-text-secondary: #6b7280;
+    --pc-text-on-accent: #ffffff;
+
+    /* Borders */
+    --pc-border-subtle: #e5e7eb;
+
+    /* Actions (buttons, links) */
+    --pc-action-primary: #2563eb;
+    --pc-action-primary-hover: #1d4ed8;
+
+    /* Status colors (used later for task status chips, etc.) */
+    --pc-status-todo: #64748b;
+    --pc-status-inprogress: #1e88e5;
+    --pc-status-blocked: #b91c1c;
+    --pc-status-complete: #16a34a;
+
+    /* ===== Spacing Scale (4px base) ========================================= */
+    --pc-space-1: 4px;
+    --pc-space-2: 8px;
+    --pc-space-3: 12px;
+    --pc-space-4: 16px;
+    --pc-space-5: 24px;
+    --pc-space-6: 32px;
+    --pc-space-7: 40px;
+
+    /* ===== Radii ============================================================ */
+    --pc-radius-sm: 6px;
+    --pc-radius-md: 10px;
+    --pc-radius-lg: 14px;
+
+    /* ===== Shadows ========================================================== */
+    --pc-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.06);
+
+    /* ===== Typography ======================================================= */
+    --pc-font-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+    /* Line-height defaults */
+    --pc-lineheight-body: 1.4;
+    --pc-lineheight-heading: 1.2;
+
+    /* Container width (keeps pages from becoming ultra-wide) */
+    --pc-page-max-width: 1200px;
+}
+
+/* ===== Base element defaults ============================================== */
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: var(--pc-font-sans);
+    line-height: var(--pc-lineheight-body);
+    color: var(--pc-text-primary);
+    background: var(--pc-bg-app);
+}
+
+/* Make links obvious and consistent */
+a {
+    color: var(--pc-action-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--pc-action-primary-hover);
+    text-decoration: underline;
+}
+
+/* A simple, reusable "card" pattern used all over the app */
+.pc-card {
+    background: var(--pc-bg-surface);
+    border: 1px solid var(--pc-border-subtle);
+    border-radius: var(--pc-radius-md);
+    box-shadow: var(--pc-shadow-card);
+}
+
+/* A simple container that keeps content readable */
+.pc-container {
+    max-width: var(--pc-page-max-width);
+    margin: 0 auto;
+    padding: var(--pc-space-6);
+}
+
+/* ===== Small global text helpers ===========================================
+   These are intentionally tiny primitives used across pages/sections.
+   They prevent repeated "same exact CSS" everywhere.
+   ========================================================================== */
+
+.pc-sectionTitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.pc-muted {
+    color: var(--pc-text-secondary);
+}

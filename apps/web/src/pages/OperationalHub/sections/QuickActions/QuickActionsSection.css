@@ -1,0 +1,28 @@
+/* ==========================================================================
+   QuickActionsSection styles
+   Subtle but powerful: reduce friction without dominating the page.
+   ========================================================================== */
+
+.quickActions__card {
+    margin-top: var(--pc-space-3);
+    padding: var(--pc-space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--pc-space-2);
+}
+
+.quickActions__btn {
+    padding: var(--pc-space-2) var(--pc-space-3);
+    border-radius: var(--pc-radius-sm);
+    border: 1px solid var(--pc-border-subtle);
+    background: var(--pc-bg-surface);
+    font-weight: 600;
+    text-align: left;
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.quickActions__hint {
+    margin-top: var(--pc-space-2);
+    font-size: 12px;
+}

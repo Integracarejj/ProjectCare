@@ -1,0 +1,53 @@
+/* ==========================================================================
+   ImmediateStateSection styles
+   Calm "dashboard cards" (4 max). Minimal text. Subtle hierarchy.
+   Mirrors the attachment’s guidance for premium-but-simple cards. 
+   ========================================================================== */
+
+.immediateState__grid {
+    margin-top: var(--pc-space-3);
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--pc-space-4);
+}
+
+.immediateState__card {
+    padding: var(--pc-space-4);
+    cursor: pointer;
+    /* later: clickable drilldown */
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.immediateState__card:hover {
+    transform: translateY(-1px);
+}
+
+.immediateState__label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.immediateState__value {
+    margin-top: var(--pc-space-2);
+    font-size: 28px;
+    font-weight: 800;
+    line-height: var(--pc-lineheight-heading);
+}
+
+.immediateState__hint {
+    margin-top: var(--pc-space-2);
+    font-size: 12px;
+}
+
+@media (max-width: 980px) {
+    .immediateState__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .immediateState__grid {
+        grid-template-columns: 1fr;
+    }
+}
