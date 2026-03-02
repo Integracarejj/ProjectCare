@@ -1,111 +1,28 @@
 /* ==========================================================================
-   AppShell styles
-   Controls the top-level layout of the app (header + main content).
-   Uses global tokens from src/styles/globals.css.
-   ========================================================================== */
+ AppShell styles
+ Establishes a calm app canvas and frames page surfaces.
+ ========================================================================== */
 
 .appShell {
     min-height: 100vh;
-    background: #ffffff;
-    /* Explicit lock: no app canvas */
+    display: grid;
+    grid-template-columns: auto 1fr;
+    background: #f8fafc;
+    /* subtle canvas, not decorative */
 }
 
-/* Header is a "card" so it feels elevated above the page background */
-.appShell__header {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    border-top: none;
-}
-
-.appShell__headerInner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--pc-space-6);
-}
-
-.appShell__brand {
+/* =========================
+ Main content column
+ ========================= */
+.appShell__content {
     display: flex;
     flex-direction: column;
-    gap: var(--pc-space-1);
+    min-width: 0;
 }
 
-.appShell__brandName {
-    font-weight: 700;
-    font-size: 18px;
-}
-
-.appShell__brandTag {
-    font-size: 12px;
-    color: var(--pc-text-secondary);
-}
-
-.appShell__pageTitle {
-    font-weight: 600;
-    color: var(--pc-text-primary);
-}
-
+/* =========================
+ Main content area
+ ========================= */
 .appShell__main {
-    padding-top: var(--pc-space-6);
-}
-
-/* ===== Header right side ================================================ */
-
-.appShell__right {
-    display: flex;
-    align-items: center;
-    gap: var(--pc-space-4);
-}
-
-/* ===== Quick Actions dropdown =========================================== */
-
-.quickMenu {
-    position: relative;
-}
-
-.quickMenu__summary {
-    list-style: none;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 12px;
-    padding: var(--pc-space-2) var(--pc-space-3);
-    border-radius: var(--pc-radius-sm);
-    border: 1px solid var(--pc-border-subtle);
-    background: var(--pc-bg-surface);
-}
-
-.quickMenu__summary::-webkit-details-marker {
-    display: none;
-}
-
-.quickMenu[open] .quickMenu__summary {
-    border-color: var(--pc-accent-blue-border);
-    background: var(--pc-accent-blue-bg);
-}
-
-.quickMenu__panel {
-    position: absolute;
-    right: 0;
-    top: calc(100% + var(--pc-space-2));
-    width: 220px;
-    padding: var(--pc-space-2);
-    z-index: 10;
-}
-
-.quickMenu__item {
-    width: 100%;
-    text-align: left;
-    padding: var(--pc-space-2) var(--pc-space-3);
-    border-radius: var(--pc-radius-sm);
-    border: 1px solid var(--pc-border-subtle);
-    background: var(--pc-bg-surface);
-    font-weight: 600;
-    cursor: not-allowed;
-    opacity: 0.85;
-    margin-bottom: var(--pc-space-2);
-}
-
-.quickMenu__item:last-child {
-    margin-bottom: 0;
+    padding: var(--pc-space-6);
 }

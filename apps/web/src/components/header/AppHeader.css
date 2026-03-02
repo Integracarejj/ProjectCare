@@ -1,0 +1,40 @@
+.pcHeader {
+    background: #ffffff;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+    box-shadow:
+        0 2px 6px rgba(17, 24, 39, 0.06),
+        0 16px 40px rgba(17, 24, 39, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.pcHeader__inner {
+    height: 18px;
+    display: flex;
+    align-items: center;
+    padding: 0px 32px;
+    /* more lateral authority */
+}
+
+.pcHeader__brand {
+    display: flex;
+    align-items: center;
+    margin-left: -100px;
+    /* subtle left anchor */
+}
+
+.pcHeader__logo {
+    height: 75px;
+    /* increased from 52px */
+    width: auto;
+}
+
+.pcHeader__pageLabel {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.25px;
+    color: var(--pc-text-secondary);
+    padding-left: 16px;
+    border-left: 1px solid rgba(17, 24, 39, 0.12);
+}

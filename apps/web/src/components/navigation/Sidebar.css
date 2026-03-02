@@ -1,0 +1,111 @@
+/* ==========================================================================
+   Sidebar (feature component)
+   Modern, sleek, simplistic. Subtle blue tone. Collapse-ready.
+   ========================================================================== */
+
+.pcSidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 240px;
+    background: var(--pc-accent-blue-bg);
+    /* subtle blue tone */
+    border-right: 1px solid var(--pc-border-subtle);
+    display: flex;
+    flex-direction: column;
+    padding: var(--pc-space-4);
+    box-sizing: border-box;
+}
+
+.pcSidebar--collapsed {
+    width: 64px;
+    padding-left: var(--pc-space-3);
+    padding-right: var(--pc-space-3);
+}
+
+.pcSidebar__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--pc-space-3);
+    margin-bottom: var(--pc-space-5);
+}
+
+.pcSidebar__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--pc-space-2);
+    text-decoration: none;
+    color: var(--pc-text-primary);
+    font-weight: 700;
+}
+
+.pcSidebar__brandIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid var(--pc-border-subtle);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pcSidebar__brandText {
+    font-size: 14px;
+    letter-spacing: 0.2px;
+}
+
+.pcSidebar__collapseBtn {
+    border: 1px solid var(--pc-border-subtle);
+    background: #ffffff;
+    color: var(--pc-text-primary);
+    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+}
+
+.pcSidebar__collapseBtn:hover {
+    background: #f8fafc;
+}
+
+.pcSidebar__nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pc-space-2);
+}
+
+.pcSidebar__link {
+    display: flex;
+    align-items: center;
+    gap: var(--pc-space-3);
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--pc-text-primary);
+    border: 1px solid transparent;
+}
+
+.pcSidebar__icon {
+    width: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pcSidebar__label {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.pcSidebar__link:hover {
+    background: rgba(255, 255, 255, 0.65);
+    border-color: rgba(17, 24, 39, 0.06);
+}
+
+.pcSidebar__link--active {
+    background: #ffffff;
+    border-color: var(--pc-accent-blue-border);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}

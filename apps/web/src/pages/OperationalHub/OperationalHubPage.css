@@ -1,51 +1,90 @@
 /* ==========================================================================
-   OperationalHubPage layout (centered, 2-column)
-   ========================================================================== */
+ OperationalHubPage layout
+ ========================================================================== */
 
 .hub {
     width: 100%;
 }
 
-/* White page surface so content is not floating on app gray */
+/* Primary page surface */
 .hub__surface {
-    background: var(--pc-bg-surface);
+    background: #ffffff;
     border-radius: var(--pc-radius-lg);
-    box-shadow: 0 0 0 1px rgba(17, 24, 39, 0.04);
+    padding: var(--pc-space-6);
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    box-shadow:
+        0 1px 2px rgba(17, 24, 39, 0.04),
+        0 8px 24px rgba(17, 24, 39, 0.08);
+}
+
+/* Context band */
+.hub__headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: var(--pc-space-4);
+    margin-bottom: var(--pc-space-6);
+    border-bottom: 1px solid var(--pc-border-subtle);
 }
 
 .hub__topNote {
-    margin-bottom: var(--pc-space-4);
+    margin: 0;
+    font-size: 13px;
+    color: var(--pc-text-secondary);
 }
 
-/* Grid:
-   - top row spans both columns
-   - bottom row is two equal columns
-*/
+/* ==========================================================================
+ Grid layout
+ ========================================================================== */
+
+/* Overall page grid */
 .hub__grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--pc-space-6);
-    align-items: start;
+    grid-template-columns: 1fr;
+    gap: var(--pc-space-8);
 }
 
+/* Immediate State gets its own row + breathing room */
 .hub__rowFull {
-    grid-column: 1 / -1;
+    margin-bottom: var(--pc-space-6);
 }
 
-.hub__main,
-.hub__rail {
-    display: flex;
-    flex-direction: column;
-    gap: var(--pc-space-6);
+/* Bottom paired sections */
+.hub__bottomGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+    /* ✅ THIS is where separation comes from */
+    column-gap: 96px;
+    /* increase/decrease this to taste */
+
+    align-items: start;
+    position: relative;
 }
 
-/* Responsive */
+/* ✅ Divider lives IN THE GAP, not in either column */
+.hub__bottomGrid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    transform: translateX(-0.5px);
+    background: var(--pc-border-subtle);
+}
+
+/* ==========================================================================
+ Responsive
+ ========================================================================== */
+
 @media (max-width: 980px) {
-    .hub__grid {
+    .hub__bottomGrid {
         grid-template-columns: 1fr;
+        column-gap: 0;
     }
 
-    .hub__rail {
-        order: 3;
+    .hub__bottomGrid::before {
+        display: none;
     }
 }

@@ -1,21 +1,5 @@
-/**
- * OperationalHubPage (PM-first)
- * ----------------------------------------------------------------------------
- * PURPOSE:
- * - Calm operational control center (not a marketing page).
- * - Answers in 10 seconds: what needs attention, what to focus on, what changed,
- *   and what quick actions are available.
- *
- * PERSONA NOTE:
- * - This is PM-first (Operational Hub).
- * - Later: Exec view swaps "Your Focus" for portfolio rollups, using the same layout.
- *
- * DATA NOTE (future):
- * - Top cards: derived from tasks/projects tables (overdue/blocked/risk/health).
- * - Your Focus: tasks assigned to user, grouped by project, sorted by urgency.
- * - What Changed: activity stream since last visit (audit/events).
- */
 import './OperationalHubPage.css'
+
 import { ImmediateStateSection } from './sections/ImmediateState/ImmediateStateSection'
 import { YourFocusSection, type FocusTask } from './sections/YourFocus/YourFocusSection'
 import { MyProjectsSection, type MyProject } from './sections/MyProjects/MyProjectsSection'
@@ -27,7 +11,6 @@ export function OperationalHubPage() {
         day: 'numeric',
     })
 
-    // Sample data (transitional — API later)
     const projects: MyProject[] = [
         { id: 'p1', name: 'RePlatform (WelcomeHome)', rag: 'Yellow', note: '2 overdue tasks • next milestone in 8 days' },
         { id: 'p2', name: 'Ops Tools 101', rag: 'Green', note: 'On track • 0 blockers' },
@@ -41,25 +24,26 @@ export function OperationalHubPage() {
         { id: 't4', projectName: 'Ops Tools 101', title: 'Review training checklist and publish', dueLabel: 'Next week', status: 'Not Started' },
     ]
 
-    const needsAttention =
-        focusTasks.filter(t => t.status === 'Blocked' || t.dueLabel.startsWith('Overdue')).length
-
-    const dueThisWeek =
-        focusTasks.filter(t => ['Tomorrow', 'Fri'].includes(t.dueLabel)).length
-
-    const atRiskProjects = projects.filter(p => p.rag !== 'Green').length
-
-    const overallHealthPct = Math.round(
-        (projects.filter(p => p.rag === 'Green').length / projects.length) * 100
-    )
-
-    const summary = { needsAttention, dueThisWeek, atRiskProjects, overallHealthPct }
+    const summary = {
+        needsAttention: focusTasks.filter(
+            t => t.status === 'Blocked' || t.dueLabel.startsWith('Overdue')
+        ).length,
+        dueThisWeek: focusTasks.filter(t =>
+            ['Tomorrow', 'Fri'].includes(t.dueLabel)
+        ).length,
+        atRiskProjects: projects.filter(p => p.rag !== 'Green').length,
+        overallHealthPct: Math.round(
+            (projects.filter(p => p.rag === 'Green').length / projects.length) * 100
+        ),
+    }
 
     return (
         <div className="hub">
-            <div className="pc-container hub__surface">
-                <div className="hub__topNote pc-muted">
-                    <strong>Today:</strong> {todayLabel} — {summary.needsAttention} items need attention
+            <section className="hub__surface">
+                <div className="hub__headerRow">
+                    <p className="hub__topNote">
+                        Today: <strong>{todayLabel}</strong> — {summary.needsAttention} items need attention
+                    </p>
                 </div>
 
                 <div className="hub__grid">
@@ -67,17 +51,12 @@ export function OperationalHubPage() {
                         <ImmediateStateSection summary={summary} />
                     </div>
 
-                    <div className="hub__main">
+                    <div className="hub__bottomGrid">
                         <YourFocusSection tasks={focusTasks} />
-                    </div>
-
-                    <aside className="hub__rail">
                         <MyProjectsSection projects={projects} />
-                    </aside>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     )
-
-
 }
