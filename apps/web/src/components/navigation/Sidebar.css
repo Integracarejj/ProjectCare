@@ -1,16 +1,17 @@
 /* ==========================================================================
-   Sidebar (feature component)
-   Modern, sleek, simplistic. Subtle blue tone. Collapse-ready.
-   ========================================================================== */
+ Sidebar (navigation spine)
+ White, authoritative, enterprise-grade.
+ ========================================================================== */
 
 .pcSidebar {
     position: sticky;
     top: 0;
     height: 100vh;
     width: 240px;
-    background: var(--pc-accent-blue-bg);
-    /* subtle blue tone */
+
+    background: #ffffff;
     border-right: 1px solid var(--pc-border-subtle);
+
     display: flex;
     flex-direction: column;
     padding: var(--pc-space-4);
@@ -23,12 +24,13 @@
     padding-right: var(--pc-space-3);
 }
 
+/* Top / brand area */
 .pcSidebar__top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--pc-space-3);
-    margin-bottom: var(--pc-space-5);
+    margin-bottom: var(--pc-space-6);
 }
 
 .pcSidebar__brand {
@@ -37,7 +39,7 @@
     gap: var(--pc-space-2);
     text-decoration: none;
     color: var(--pc-text-primary);
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .pcSidebar__brandIcon {
@@ -56,6 +58,7 @@
     letter-spacing: 0.2px;
 }
 
+/* Collapse button */
 .pcSidebar__collapseBtn {
     border: 1px solid var(--pc-border-subtle);
     background: #ffffff;
@@ -70,28 +73,35 @@
     background: #f8fafc;
 }
 
+/* Nav */
 .pcSidebar__nav {
     display: flex;
     flex-direction: column;
-    gap: var(--pc-space-2);
+    gap: var(--pc-space-1);
 }
 
+/* Nav link */
 .pcSidebar__link {
+    position: relative;
     display: flex;
     align-items: center;
     gap: var(--pc-space-3);
     padding: 10px 12px;
     border-radius: 10px;
     text-decoration: none;
+
     color: var(--pc-text-primary);
     border: 1px solid transparent;
 }
 
+/* Icon */
 .pcSidebar__icon {
     width: 20px;
+    height: 20px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    color: var(--pc-text-secondary);
 }
 
 .pcSidebar__label {
@@ -99,13 +109,28 @@
     font-weight: 600;
 }
 
+/* Hover */
 .pcSidebar__link:hover {
-    background: rgba(255, 255, 255, 0.65);
-    border-color: rgba(17, 24, 39, 0.06);
+    background: #f8fafc;
 }
 
+/* ✅ Strong active state */
 .pcSidebar__link--active {
-    background: #ffffff;
-    border-color: var(--pc-accent-blue-border);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    background: #f1f5f9;
+    border-color: var(--pc-border-subtle);
+}
+
+.pcSidebar__link--active::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--pc-accent-blue-border);
+}
+
+.pcSidebar__link--active .pcSidebar__icon {
+    color: var(--pc-text-primary);
 }
