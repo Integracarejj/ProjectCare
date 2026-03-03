@@ -1,4 +1,5 @@
 import './AppHeader.css'
+import { QuickActions } from '../QuickActions/QuickActions'
 
 type AppHeaderProps = {
     title: string
@@ -7,19 +8,25 @@ type AppHeaderProps = {
 export function AppHeader({ title }: AppHeaderProps) {
     return (
         <header className="pcHeader">
-            <div className="pcHeader__inner pc-container">
+            <div className="pcHeader__inner">
                 <div className="pcHeader__brand">
-                    <a href="/operational-hub" className="pcHeader__brandLink">
+                    <a
+                        className="pcHeader__homeLink"
+                        href="/operational-hub"
+                        aria-label="ProjectCare home"
+                    >
                         <img
-                            src="/logo/ProjectCare_logo1.png"
+                            src="/ProjectCareLogo.png"
                             alt="ProjectCare"
                             className="pcHeader__logo"
                         />
                     </a>
+
+                    <div className="pcHeader__pageLabel">{title}</div>
                 </div>
 
-                <div className="pcHeader__context">
-                    <span className="pcHeader__pageLabel">{title}</span>
+                <div className="pcHeader__right" aria-label="Header actions">
+                    <QuickActions />
                 </div>
             </div>
         </header>

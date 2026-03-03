@@ -1,0 +1,126 @@
+/* QuickActions.css
+   ---------------------------------------------------------------------------
+   Local-only styling. No globals. Calm, noticeable, not overpowering.
+*/
+
+.qa {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.qa__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 12px;
+    border-radius: 10px;
+
+    border: 1px solid rgba(0, 140, 160, 0.25);
+    background: rgba(120, 220, 220, 0.22);
+    /* light turquoise */
+    color: #064b55;
+
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+
+    cursor: pointer;
+    user-select: none;
+
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+.qa__trigger:hover {
+    background: rgba(120, 220, 220, 0.30);
+    border-color: rgba(0, 140, 160, 0.32);
+}
+
+.qa__trigger:focus-visible {
+    outline: 3px solid rgba(0, 140, 160, 0.25);
+    outline-offset: 2px;
+}
+
+.qa__chev {
+    width: 16px;
+    height: 16px;
+    opacity: 0.85;
+}
+
+/* Menu */
+.qa__menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    width: 240px;
+
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10);
+    padding: 6px;
+
+    z-index: 100;
+
+    transform-origin: top right;
+    animation: qaMenuIn 90ms ease-out;
+}
+
+@keyframes qaMenuIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.qa__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 10px;
+    border: 0;
+    background: transparent;
+    border-radius: 10px;
+
+    text-align: left;
+    cursor: pointer;
+
+    color: #1b2a2e;
+    font-size: 13px;
+}
+
+.qa__item:hover {
+    background: rgba(120, 220, 220, 0.16);
+}
+
+.qa__item:focus-visible {
+    outline: 3px solid rgba(0, 140, 160, 0.22);
+    outline-offset: 2px;
+}
+
+.qa__itemIcon {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0a5f6d;
+}
+
+.qa__icon {
+    width: 18px;
+    height: 18px;
+}
+
+.qa__itemLabel {
+    flex: 1;
+}

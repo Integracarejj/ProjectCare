@@ -1,20 +1,21 @@
 .pcHeader {
     background: #ffffff;
     border-bottom: 1px solid rgba(17, 24, 39, 0.08);
-    box-shadow:
-        0 2px 6px rgba(17, 24, 39, 0.06),
-        0 16px 40px rgba(17, 24, 39, 0.08);
+    box-shadow: 0 2px 6px rgba(17, 24, 39, 0.06), 0 16px 40px rgba(17, 24, 39, 0.08);
     position: sticky;
     top: 0;
     z-index: 50;
 }
 
 .pcHeader__inner {
-    height: 18px;
+    /* Was 18px in your file — that would clip the logo + any actions. */
+    min-height: 72px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0px 32px;
     /* more lateral authority */
+    gap: 16px;
 }
 
 .pcHeader__brand {
@@ -22,12 +23,20 @@
     align-items: center;
     margin-left: -100px;
     /* subtle left anchor */
+    gap: 16px;
+}
+
+.pcHeader__homeLink {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
 }
 
 .pcHeader__logo {
     height: 75px;
     /* increased from 52px */
     width: auto;
+    display: block;
 }
 
 .pcHeader__pageLabel {
@@ -37,4 +46,14 @@
     color: var(--pc-text-secondary);
     padding-left: 16px;
     border-left: 1px solid rgba(17, 24, 39, 0.12);
+    white-space: nowrap;
+}
+
+/* New: right-side actions area (Quick Actions lives here) */
+.pcHeader__right {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex: 0 0 auto;
 }
