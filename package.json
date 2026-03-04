@@ -11,6 +11,15 @@
     "node": "20.x"
   },
   "scripts": {
-    "typecheck": "echo \"typecheck wired later\""
+    "dev:web": "npm run dev --workspace @projectcare/web",
+    "dev:api": "npm run dev --workspace @projectcare/api",
+    "dev": "concurrently -n WEB,API -c green,blue --kill-others \"npm run dev:web\" \"npm run dev:api\""
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
+    "react-router-dom": "^7.13.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
   }
 }

@@ -1,18 +1,53 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AppShell } from './layouts/AppShell/AppShell'
 import { OperationalHubPage } from './pages/OperationalHub/OperationalHubPage'
+import { ProjectsPage } from './pages/Projects/ProjectsPage'
+import { MyProjectsPage } from './pages/Projects/MyProjectsPage'
 
-/**
- * App
- * ----------------------------------------------------------------------------
- * We render the PM-first Operational Hub as the landing experience.
- * Later, routing will let us navigate to:
- * - /projects
- * - /projects/:id (List/Board/Gantt/etc.)
- */
 export default function App() {
   return (
-    <AppShell title="Operational Hub">
-      <OperationalHubPage />
-    </AppShell>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/operationalhub" replace />} />
+
+        <Route
+          path="/operationalhub"
+          element={
+            <AppShell title="Operational Hub">
+              <OperationalHubPage />
+            </AppShell>
+          }
+        />
+
+        <Route
+          path="/projects"
+          element={
+            <AppShell title="My Projects">
+              <MyProjectsPage />
+            </AppShell>
+          }
+        />
+
+        <Route
+          path="/projects/new"
+          element={
+            <AppShell title="New Project">
+              <ProjectsPage />
+            </AppShell>
+          }
+        />
+
+        <Route
+          path="/projects/:projectId"
+          element={
+            <AppShell title="Project">
+              <ProjectsPage />
+            </AppShell>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/operationalhub" replace />} />
+      </Routes>
+    </BrowserRouter>
   )
 }

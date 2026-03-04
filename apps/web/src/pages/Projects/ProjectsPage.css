@@ -1,52 +1,181 @@
 /* ==========================================================================
-   ProjectsPage styles
-   This file controls visuals for the Projects landing page only.
-   If you want to change global colors/spacing, go to styles/globals.css.
+   Project Workspace – refined shell
    ========================================================================== */
 
-.projectsPage__header {
-    margin-bottom: var(--pc-space-5);
-}
-
-.projectsPage__title {
-    margin: 0;
-    line-height: var(--pc-lineheight-heading);
-    font-size: 28px;
-}
-
-.projectsPage__subtitle {
-    margin: var(--pc-space-2) 0 0 0;
-    color: var(--pc-text-secondary);
-}
-
-.projectsPage__content {
-    padding: var(--pc-space-6);
-}
-
-.projectsPage__empty {
+.pcProjectPage {
     display: flex;
     flex-direction: column;
-    gap: var(--pc-space-3);
+    gap: 10px;
+    height: 100%;
 }
 
-.projectsPage__emptyTitle {
+/* =====================
+   Top Row
+   ===================== */
+
+.pcProjectPage__topRow {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 24px;
+    margin-top: -6px;
+}
+
+.pcProjectPage__titleInput {
+    font-size: 20px;
     font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    min-width: 260px;
 }
 
-.projectsPage__emptyBody {
+.pcProjectPage__health {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 12px;
     color: var(--pc-text-secondary);
-    max-width: 60ch;
 }
 
-.projectsPage__primaryButton {
-    width: fit-content;
-    padding: var(--pc-space-2) var(--pc-space-4);
-    border-radius: var(--pc-radius-sm);
-    border: 1px solid var(--pc-border-subtle);
-    background: var(--pc-action-primary);
-    color: var(--pc-text-on-accent);
+.pcHealthLabel {
     font-weight: 600;
-    cursor: not-allowed;
-    /* disabled for now */
-    opacity: 0.65;
+}
+
+.pcHealthValue {
+    font-size: 14px;
+}
+
+.pcProjectPage__actions {
+    display: flex;
+    gap: 10px;
+}
+
+.pcIconBtn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: #fff;
+    cursor: pointer;
+}
+
+/* =====================
+   View Selector
+   ===================== */
+
+.pcProjectPage__views {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pcViewTabWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pcViewTab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 8px;
+}
+
+.pcViewTab.is-active {
+    color: var(--pc-action-primary);
+}
+
+.pcViewSeparator {
+    color: rgba(17, 24, 39, 0.35);
+}
+
+/* =====================
+   Command Ribbon
+   ===================== */
+
+.pcProjectPage__commandBar {
+    display: flex;
+    justify-content: space-between;
+    background: #f8fafc;
+    padding: 6px 8px;
+    border-radius: 10px;
+}
+
+.pcCommandGroup {
+    display: flex;
+    gap: 8px;
+}
+
+.pcCommandGroup--right {
+    margin-left: auto;
+}
+
+.pcCmdIcon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: #fff;
+    cursor: pointer;
+}
+
+.pcCmdBtn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    background: #fff;
+}
+
+.pcCmdBtn--primary {
+    color: var(--pc-action-primary);
+    border-color: rgba(37, 99, 235, 0.35);
+}
+
+/* =====================
+   Surface / Table Well
+   ===================== */
+
+.pcProjectPage__surface {
+    flex: 1;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.pcTableWell {
+    height: 100%;
+    padding: 12px;
+    overflow: auto;
+    background-image: linear-gradient(rgba(15, 23, 42, 0.05) 1px,
+            transparent 1px);
+    background-size: 100% 40px;
+}
+
+.pcTableHeader {
+    display: grid;
+    grid-template-columns: 100px 1.5fr 1fr 120px 120px 140px;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(37, 99, 235, 0.08);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.pcTableEmpty {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--pc-text-secondary);
+}
+
+.pcViewPlaceholder {
+    padding: 16px;
+    font-size: 13px;
+    color: var(--pc-text-secondary);
 }

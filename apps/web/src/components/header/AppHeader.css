@@ -9,7 +9,7 @@
 
 .pcHeader__inner {
     /* Was 18px in your file — that would clip the logo + any actions. */
-    min-height: 72px;
+    min-height: 96px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -21,9 +21,9 @@
 .pcHeader__brand {
     display: flex;
     align-items: center;
-    margin-left: -100px;
-    /* subtle left anchor */
     gap: 16px;
+    flex: 0 0 auto;
+    /* 👈 critical */
 }
 
 .pcHeader__homeLink {
@@ -33,7 +33,7 @@
 }
 
 .pcHeader__logo {
-    height: 75px;
+    height: 80px;
     /* increased from 52px */
     width: auto;
     display: block;

@@ -12,11 +12,11 @@ export function AppHeader({ title }: AppHeaderProps) {
                 <div className="pcHeader__brand">
                     <a
                         className="pcHeader__homeLink"
-                        href="/operational-hub"
+                        href="/projects"
                         aria-label="ProjectCare home"
                     >
                         <img
-                            src="/ProjectCareLogo.png"
+                            src="/logo/ProjectCare_logo1.png"
                             alt="ProjectCare"
                             className="pcHeader__logo"
                         />

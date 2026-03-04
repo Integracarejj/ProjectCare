@@ -1,0 +1,89 @@
+import {
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+    type ColumnDef,
+}
+
+from '@tanstack/react-table'
+import './TaskTable.css'
+
+type TaskTableProps<T extends object>= {
+    rows: T[] columns: Array<ColumnDef<T, any>> ariaLabel?: string
+}
+
+/**
+ * TaskTable (thin TanStack wrapper)
+ * ---------------------------------------------------------------------------
+ * Intentional constraints:
+ * - No feature logic here yet (sorting/filtering/selection/editing)
+ * - No data fetching
+ * - No business rules
+ *
+ * This stays small. Features will be imported later via separate modules.
+ *
+ * TanStack is modular: we enable only getCoreRowModel for now. [3](https://tanstack.com/table/v8/docs/guide/row-models)[4](https://github.com/TanStack/table/blob/main/docs/guide/row-models.md)
+ */
+export function TaskTable<T extends object>({
+    rows,
+    columns,
+    ariaLabel='Tasks table',
+}
+
+: TaskTableProps<T>) {
+    const table=useReactTable({
+
+        data: rows,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    }) return (<div className="pcTaskTable" aria-label= {
+        ariaLabel
+    }
+
+    > <table className="pcTaskTable__table" > <thead className="pcTaskTable__thead" > {
+        table.getHeaderGroups().map((hg)=> (<tr key= {
+                    hg.id
+                }
+
+                className="pcTaskTable__tr" > {
+                    hg.headers.map((header)=> (<th key= {
+                                header.id
+                            }
+
+                            className="pcTaskTable__th" > {
+                                header.isPlaceholder ? null : flexRender(header.column.columnDef.header,
+                                    header.getContext())
+                            }
+
+                            </th>))
+                }
+
+                </tr>))
+    }
+
+    </thead> <tbody className="pcTaskTable__tbody" > {
+        table.getRowModel().rows.length===0 ? (<tr className="pcTaskTable__tr" > <td className="pcTaskTable__td pcTaskTable__empty" colSpan= {
+                columns.length
+            }
+
+            > No tasks yet. (Next: JSON-backed seed data → API → table rows) </td> </tr>) : (table.getRowModel().rows.map((row)=> (<tr key= {
+                        row.id
+                    }
+
+                    className="pcTaskTable__tr" > {
+                        row.getVisibleCells().map((cell)=> (<td key= {
+                                    cell.id
+                                }
+
+                                className="pcTaskTable__td" > {
+                                    flexRender(cell.column.columnDef.cell, cell.getContext())
+                                }
+
+                                </td>))
+                    }
+
+                    </tr>)))
+    }
+
+    </tbody> </table> </div>)
+}
