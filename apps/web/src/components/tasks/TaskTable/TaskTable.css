@@ -1,89 +1,87 @@
-import {
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-    type ColumnDef,
+/* ==========================================================================
+   TaskTable (calm, enterprise)
+   - Localized styling only
+   - No Tailwind, no global selectors
+   ========================================================================== */
+
+.pcTaskTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12px;
+    color: var(--pc-text-primary);
 }
 
-from '@tanstack/react-table'
-import './TaskTable.css'
-
-type TaskTableProps<T extends object>= {
-    rows: T[] columns: Array<ColumnDef<T, any>> ariaLabel?: string
+.pcTaskTable__headRow {
+    background: rgba(37, 99, 235, 0.08);
 }
 
-/**
- * TaskTable (thin TanStack wrapper)
- * ---------------------------------------------------------------------------
- * Intentional constraints:
- * - No feature logic here yet (sorting/filtering/selection/editing)
- * - No data fetching
- * - No business rules
- *
- * This stays small. Features will be imported later via separate modules.
- *
- * TanStack is modular: we enable only getCoreRowModel for now. [3](https://tanstack.com/table/v8/docs/guide/row-models)[4](https://github.com/TanStack/table/blob/main/docs/guide/row-models.md)
- */
-export function TaskTable<T extends object>({
-    rows,
-    columns,
-    ariaLabel='Tasks table',
+.pcTaskTable__th {
+    text-align: left;
+    font-weight: 700;
+    padding: 10px 10px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.12);
+    white-space: nowrap;
 }
 
-: TaskTableProps<T>) {
-    const table=useReactTable({
+.pcTaskTable__row {
+    background: #fff;
+}
 
-        data: rows,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-    }) return (<div className="pcTaskTable" aria-label= {
-        ariaLabel
-    }
+.pcTaskTable__td {
+    padding: 9px 10px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+    vertical-align: middle;
+}
 
-    > <table className="pcTaskTable__table" > <thead className="pcTaskTable__thead" > {
-        table.getHeaderGroups().map((hg)=> (<tr key= {
-                    hg.id
-                }
+.pcTaskTable__empty {
+    color: var(--pc-text-secondary);
+}
 
-                className="pcTaskTable__tr" > {
-                    hg.headers.map((header)=> (<th key= {
-                                header.id
-                            }
+.pcTaskTable__selectCell {
+    width: 44px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
 
-                            className="pcTaskTable__th" > {
-                                header.isPlaceholder ? null : flexRender(header.column.columnDef.header,
-                                    header.getContext())
-                            }
+.pcTaskTable__selectHeader,
+.pcTaskTable__selectCellInner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-                            </th>))
-                }
+.pcTaskTable__checkbox {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--pc-action-primary);
+    cursor: pointer;
+}
 
-                </tr>))
-    }
+.pcTaskTable__expander {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid rgba(17, 24, 39, 0.14);
+    background: #fff;
+    cursor: pointer;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    </thead> <tbody className="pcTaskTable__tbody" > {
-        table.getRowModel().rows.length===0 ? (<tr className="pcTaskTable__tr" > <td className="pcTaskTable__td pcTaskTable__empty" colSpan= {
-                columns.length
-            }
+.pcTaskTable__expanderSpacer {
+    width: 22px;
+    display: inline-block;
+}
 
-            > No tasks yet. (Next: JSON-backed seed data → API → table rows) </td> </tr>) : (table.getRowModel().rows.map((row)=> (<tr key= {
-                        row.id
-                    }
+.pcTaskTable__taskCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-                    className="pcTaskTable__tr" > {
-                        row.getVisibleCells().map((cell)=> (<td key= {
-                                    cell.id
-                                }
-
-                                className="pcTaskTable__td" > {
-                                    flexRender(cell.column.columnDef.cell, cell.getContext())
-                                }
-
-                                </td>))
-                    }
-
-                    </tr>)))
-    }
-
-    </tbody> </table> </div>)
+.pcTaskTable__taskTitle {
+    display: inline-block;
 }

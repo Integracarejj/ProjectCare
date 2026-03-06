@@ -1,4 +1,5 @@
 import './Sidebar.css'
+import { Link } from 'react-router-dom'
 import { SidebarItem } from './SidebarItem'
 import { useNavigation } from './useNavigation'
 
@@ -8,31 +9,26 @@ type SidebarProps = {
     activePath?: string
 }
 
-function getPathnameSafe(): string {
-    if (typeof window === 'undefined') return ''
-    return window.location?.pathname ?? ''
-}
-
 export function Sidebar({
     collapsed = false,
     onToggleCollapse,
-    activePath,
 }: SidebarProps) {
     const items = useNavigation()
-    const path = activePath ?? getPathnameSafe()
 
     return (
         <aside className={['pcSidebar', collapsed ? 'pcSidebar--collapsed' : ''].join(' ')}>
             <div className="pcSidebar__top">
-                <a
+                <Link
                     className="pcSidebar__brand"
-                    href="/operational-hub"
+                    to="/operationalhub"
                     aria-label="ProjectCare Home"
                     title="ProjectCare Home"
                 >
-                    <span className="pcSidebar__brandIcon" aria-hidden="true">⌂</span>
+                    <span className="pcSidebar__brandIcon" aria-hidden="true">
+                        ⌂
+                    </span>
                     {!collapsed && <span className="pcSidebar__brandText">ProjectCare</span>}
-                </a>
+                </Link>
 
                 <button
                     type="button"
@@ -51,7 +47,6 @@ export function Sidebar({
                         key={item.id}
                         item={item}
                         collapsed={collapsed}
-                        isActive={path === item.href}
                     />
                 ))}
             </nav>

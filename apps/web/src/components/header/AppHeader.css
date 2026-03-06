@@ -57,3 +57,45 @@
     gap: 12px;
     flex: 0 0 auto;
 }
+
+/* Right-side layout for QuickActions + user lens */
+.pcHeader__right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+/* User lens container */
+.pcHeader__userArea {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(17, 24, 39, 0.12);
+}
+
+.pcHeader__userText {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--pc-text-primary);
+    white-space: nowrap;
+}
+
+.pcHeader__userRole {
+    color: var(--pc-text-secondary);
+    font-weight: 500;
+}
+
+.pcHeader__logout {
+    background: transparent;
+    border: 1px solid rgba(17, 24, 39, 0.14);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pcHeader__logout:hover {
+    background: rgba(17, 24, 39, 0.04);
+}
