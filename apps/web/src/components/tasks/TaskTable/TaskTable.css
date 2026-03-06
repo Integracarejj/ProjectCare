@@ -28,6 +28,11 @@
     background: #fff;
 }
 
+.pcTaskTable__row[data-selected='true'] {
+    background: rgba(37, 99, 235, 0.06);
+}
+
+
 .pcTaskTable__td {
     padding: 9px 10px;
     border-bottom: 1px solid rgba(17, 24, 39, 0.08);
@@ -81,6 +86,15 @@
     align-items: center;
     gap: 8px;
 }
+
+.pcTaskTable__taskCell:focus {
+    outline: none;
+}
+
+.pcTaskTable__taskCell[data-focused='true'] {
+    box-shadow: inset 3px 0 0 rgba(37, 99, 235, 0.45);
+}
+
 
 .pcTaskTable__taskTitle {
     display: inline-block;

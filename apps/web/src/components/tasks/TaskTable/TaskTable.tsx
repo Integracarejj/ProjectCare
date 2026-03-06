@@ -28,57 +28,40 @@ export type TaskRow = {
     order?: number
     isMilestone?: boolean
     createdAt?: string
-    // NOTE: keep this flat for storage. We will only add subRows at runtime.
 }
 
-// Runtime-only row type used by TanStack getSubRows.
 type TreeTaskRow = TreeRow<TaskRow>
+
+export type TaskTableMeta = {
+    indent?: (taskId: string) => void
+    outdent?: (taskId: string) => void
+}
 
 type TaskTableProps = {
     rows: TaskRow[]
     columns: ColumnDef<TreeTaskRow, unknown>[]
     ariaLabel?: string
+    meta?: TaskTableMeta
 }
 
-/**
- * TaskTable (thin TanStack wrapper)
- * ---------------------------------------------------------------------------
- * Intentional constraints:
- * - No feature logic here (sorting/filtering/editing/etc.)
- * - No data fetching
- * - No business rules
- *
- * Row selection is enabled here as controlled state wiring only.
- * The UI for selection lives in the columns module.
- */
-export function TaskTable({ rows, columns, ariaLabel = 'Tasks table' }: TaskTableProps) {
+export function TaskTable({ rows, columns, ariaLabel = 'Tasks table', meta }: TaskTableProps) {
     const { expanded, setExpanded, rowSelection, setRowSelection } = useTaskTableState()
 
-    // Build the runtime tree from flat rows. Keeps storage SQL-friendly.
     const treeRows = useMemo(() => buildTaskTree(rows), [rows])
 
     const table = useReactTable({
         data: treeRows,
         columns,
+        meta, // ✅ TanStack core option for custom callbacks 
         state: { expanded, rowSelection },
         onExpandedChange: setExpanded,
         onRowSelectionChange: setRowSelection,
-
-        // Keep selection keys stable across rebuilds/rerenders:
-        // TanStack row selection is keyed by rowId — use our persisted task id.
         getRowId: row => row.id,
-
-        // Enable tree expansion
         getSubRows: row => row.subRows ?? [],
         getCoreRowModel: getCoreRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
-
-        // Phase D1: enable selection (UI is in column module)
         enableRowSelection: true,
         enableMultiRowSelection: true,
-
-        // Keep selection behavior simple and explicit for now:
-        // selecting a parent should NOT implicitly select children in Phase D1.
         enableSubRowSelection: false,
     })
 
@@ -112,7 +95,11 @@ export function TaskTable({ rows, columns, ariaLabel = 'Tasks table' }: TaskTabl
                     </tr>
                 ) : (
                     table.getRowModel().rows.map(row => (
-                        <tr key={row.id} className="pcTaskTable__row">
+                        <tr
+                            key={row.id}
+                            className="pcTaskTable__row"
+                            data-selected={row.getIsSelected() ? 'true' : 'false'}
+                        >
                             {row.getVisibleCells().map(cell => (
                                 <td
                                     key={cell.id}

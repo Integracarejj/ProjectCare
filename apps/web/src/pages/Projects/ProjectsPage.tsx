@@ -4,6 +4,10 @@ import './ProjectsPage.css'
 
 import { TaskTable } from '../../components/tasks/TaskTable/TaskTable'
 import { taskColumns, type TaskRow } from '../../components/tasks/TaskTable/taskColumns'
+import {
+    indentTask,
+    outdentTask,
+} from '../../components/tasks/TaskTable/taskIndentOutdent'
 import { getProject, getProjectTasks } from '../../data/projectsApi'
 
 type ViewKey = 'list' | 'board' | 'dashboard' | 'gantt'
@@ -35,8 +39,7 @@ export function ProjectsPage() {
                 setRows(tasks ?? [])
             })
             .catch(() => {
-                // Intentionally quiet for now to avoid noisy UX in early build.
-                // (We can add a premium inline error state later.)
+                // intentionally quiet for early UX
             })
             .finally(() => setLoading(false))
     }, [isCreateMode, projectId])
@@ -58,15 +61,9 @@ export function ProjectsPage() {
                 </div>
 
                 <div className="pcProjectPage__actions">
-                    <button className="pcIconBtn" aria-label="Notifications">
-                        🔔
-                    </button>
-                    <button className="pcIconBtn" aria-label="Export">
-                        ⬇️
-                    </button>
-                    <button className="pcIconBtn" aria-label="Integrations">
-                        🔌
-                    </button>
+                    <button className="pcIconBtn" aria-label="Notifications">🔔</button>
+                    <button className="pcIconBtn" aria-label="Export">⬇️</button>
+                    <button className="pcIconBtn" aria-label="Integrations">🔌</button>
                 </div>
             </div>
 
@@ -90,18 +87,12 @@ export function ProjectsPage() {
                 })}
             </div>
 
-            {/* Formatting / Command Ribbon (restored: icon-first + "+ Column" only) */}
+            {/* Command Bar */}
             <div className="pcProjectPage__commandBar">
                 <div className="pcCommandGroup">
-                    <button className="pcCmdIcon" aria-label="Search">
-                        🔍
-                    </button>
-                    <button className="pcCmdIcon" aria-label="Filter">
-                        ⌕
-                    </button>
-                    <button className="pcCmdIcon" aria-label="View options">
-                        ☰
-                    </button>
+                    <button className="pcCmdIcon" aria-label="Search">🔍</button>
+                    <button className="pcCmdIcon" aria-label="Filter">⌕</button>
+                    <button className="pcCmdIcon" aria-label="View options">☰</button>
                 </div>
 
                 <div className="pcCommandGroup pcCommandGroup--right">
@@ -119,10 +110,18 @@ export function ProjectsPage() {
                             rows={rows}
                             columns={taskColumns}
                             ariaLabel="Project tasks list"
+                            meta={{
+                                indent: (taskId: string) =>
+                                    setRows(r => indentTask(r, taskId)),
+                                outdent: (taskId: string) =>
+                                    setRows(r => outdentTask(r, taskId)),
+                            }}
                         />
                     )
                 ) : (
-                    <div className="pcViewPlaceholder">{activeView} view (placeholder)</div>
+                    <div className="pcViewPlaceholder">
+                        {activeView} view (placeholder)
+                    </div>
                 )}
             </div>
         </div>
