@@ -1,83 +1,71 @@
-/* ==========================================================================
-   TaskTable (calm, enterprise)
-   - Localized styling only
-   - No Tailwind, no global selectors
-   ========================================================================== */
-
 .pcTaskTable {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 12px;
-    color: var(--pc-text-primary);
+    font-size: 13px;
 }
 
 .pcTaskTable__headRow {
-    background: rgba(37, 99, 235, 0.08);
+    background: #f8fafc;
 }
 
 .pcTaskTable__th {
     text-align: left;
-    font-weight: 700;
-    padding: 10px 10px;
-    border-bottom: 1px solid rgba(17, 24, 39, 0.12);
-    white-space: nowrap;
+    font-weight: 600;
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .pcTaskTable__row {
-    background: #fff;
+    background: white;
+    transition: background 120ms ease;
 }
 
-.pcTaskTable__row[data-selected='true'] {
-    background: rgba(37, 99, 235, 0.06);
+.pcTaskTable__row:hover {
+    background: rgba(0, 0, 0, 0.03);
 }
 
+.pcTaskTable__row.is-focused {
+    background: rgba(37, 99, 235, 0.08);
+}
+
+.pcTaskTable__row.is-selected {
+    background: rgba(37, 99, 235, 0.15);
+}
 
 .pcTaskTable__td {
-    padding: 9px 10px;
-    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
-    vertical-align: middle;
-}
-
-.pcTaskTable__empty {
-    color: var(--pc-text-secondary);
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .pcTaskTable__selectCell {
     width: 44px;
-    padding-left: 8px;
-    padding-right: 8px;
 }
 
 .pcTaskTable__selectHeader,
 .pcTaskTable__selectCellInner {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 }
 
 .pcTaskTable__checkbox {
     width: 14px;
     height: 14px;
-    accent-color: var(--pc-action-primary);
     cursor: pointer;
 }
 
 .pcTaskTable__expander {
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    border: 1px solid rgba(17, 24, 39, 0.14);
-    background: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: white;
     cursor: pointer;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .pcTaskTable__expanderSpacer {
-    width: 22px;
+    width: 20px;
     display: inline-block;
 }
 
@@ -85,17 +73,32 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    border-radius: 6px;
 }
 
-.pcTaskTable__taskCell:focus {
-    outline: none;
+.pcTaskTable__taskCell:focus-visible {
+    outline: 2px solid rgba(37, 99, 235, 0.35);
 }
-
-.pcTaskTable__taskCell[data-focused='true'] {
-    box-shadow: inset 3px 0 0 rgba(37, 99, 235, 0.45);
-}
-
 
 .pcTaskTable__taskTitle {
     display: inline-block;
+}
+
+.pcDragHandle {
+    cursor: grab;
+    opacity: .4;
+}
+
+.pcRow:hover .pcDragHandle {
+    opacity: 1;
+}
+
+.dragHandle {
+    cursor: grab;
+    user-select: none;
+    padding-right: 6px;
+}
+
+.dragHandle:active {
+    cursor: grabbing;
 }

@@ -1,4 +1,4 @@
-import type { TaskRow } from '../components/tasks/TaskTable/taskColumns'
+import type { TaskRow } from '../components/tasks/TaskTable/TaskTable' // ✅ import from TaskTable.tsx
 
 const API_BASE = 'http://localhost:3001/api'
 

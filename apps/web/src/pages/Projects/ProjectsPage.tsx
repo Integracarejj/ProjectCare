@@ -1,13 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import './ProjectsPage.css'
 
 import { TaskTable } from '../../components/tasks/TaskTable/TaskTable'
-import { taskColumns, type TaskRow } from '../../components/tasks/TaskTable/taskColumns'
-import {
-    indentTask,
-    outdentTask,
-} from '../../components/tasks/TaskTable/taskIndentOutdent'
+import { taskColumns } from '../../components/tasks/TaskTable/taskColumns'
+import type { TaskRow } from '../../components/tasks/TaskTable/TaskTable'
+import { indentTask, outdentTask } from '../../components/tasks/TaskTable/taskIndentOutdent'
 import { getProject, getProjectTasks } from '../../data/projectsApi'
 
 type ViewKey = 'list' | 'board' | 'dashboard' | 'gantt'
@@ -28,6 +26,10 @@ export function ProjectsPage() {
     const [rows, setRows] = useState<TaskRow[]>([])
     const [loading, setLoading] = useState(false)
 
+    // True focus anchor (separate from selection)
+    const [focusedRowId, setFocusedRowId] = useState<string | null>(null)
+
+    // Load project + tasks
     useEffect(() => {
         if (isCreateMode || !projectId) return
 
@@ -35,14 +37,59 @@ export function ProjectsPage() {
 
         Promise.all([getProject(projectId), getProjectTasks(projectId)])
             .then(([project, tasks]) => {
+                const taskRows = (tasks ?? []) as TaskRow[]
+
                 setProjectName(project.name ?? '')
-                setRows(tasks ?? [])
-            })
-            .catch(() => {
-                // intentionally quiet for early UX
+                setRows(taskRows)
+
+                if (taskRows.length > 0) {
+                    setFocusedRowId(taskRows[0].id)
+                }
             })
             .finally(() => setLoading(false))
     }, [isCreateMode, projectId])
+
+    // Ensure focused row always exists
+    useEffect(() => {
+        if (!focusedRowId) {
+            if (rows.length > 0) setFocusedRowId(rows[0].id)
+            return
+        }
+        const exists = rows.some(r => r.id === focusedRowId)
+        if (!exists) setFocusedRowId(rows.length ? rows[0].id : null)
+    }, [rows, focusedRowId])
+
+    // Navigation helpers
+    const focusNextRow = () => {
+        if (!focusedRowId) return
+        const currentIndex = rows.findIndex(r => r.id === focusedRowId)
+        const next = rows[currentIndex + 1]
+        if (next) setFocusedRowId(next.id)
+    }
+
+    const focusPrevRow = () => {
+        if (!focusedRowId) return
+        const currentIndex = rows.findIndex(r => r.id === focusedRowId)
+        const prev = rows[currentIndex - 1]
+        if (prev) setFocusedRowId(prev.id)
+    }
+
+    const tableMeta = useMemo(() => {
+        return {
+            indent: (taskId: string) => {
+                setRows(r => indentTask(r, taskId))
+                setFocusedRowId(taskId)
+            },
+            outdent: (taskId: string) => {
+                setRows(r => outdentTask(r, taskId))
+                setFocusedRowId(taskId)
+            },
+            getFocusedRowId: () => focusedRowId,
+            setFocusedRowId: (id: string | null) => setFocusedRowId(id),
+            focusNextRow,
+            focusPrevRow,
+        }
+    }, [rows, focusedRowId])
 
     return (
         <div className="pcProjectPage">
@@ -61,9 +108,9 @@ export function ProjectsPage() {
                 </div>
 
                 <div className="pcProjectPage__actions">
-                    <button className="pcIconBtn" aria-label="Notifications">🔔</button>
-                    <button className="pcIconBtn" aria-label="Export">⬇️</button>
-                    <button className="pcIconBtn" aria-label="Integrations">🔌</button>
+                    <button className="pcIconBtn">🔔</button>
+                    <button className="pcIconBtn">⬇️</button>
+                    <button className="pcIconBtn">🔌</button>
                 </div>
             </div>
 
@@ -79,9 +126,7 @@ export function ProjectsPage() {
                             >
                                 {v.icon} {v.label}
                             </button>
-                            {idx < VIEW_TABS.length - 1 && (
-                                <span className="pcViewSeparator">|</span>
-                            )}
+                            {idx < VIEW_TABS.length - 1 && <span className="pcViewSeparator"></span>}
                         </div>
                     )
                 })}
@@ -90,11 +135,10 @@ export function ProjectsPage() {
             {/* Command Bar */}
             <div className="pcProjectPage__commandBar">
                 <div className="pcCommandGroup">
-                    <button className="pcCmdIcon" aria-label="Search">🔍</button>
-                    <button className="pcCmdIcon" aria-label="Filter">⌕</button>
-                    <button className="pcCmdIcon" aria-label="View options">☰</button>
+                    <button className="pcCmdIcon">🔍</button>
+                    <button className="pcCmdIcon">⌕</button>
+                    <button className="pcCmdIcon">☰</button>
                 </div>
-
                 <div className="pcCommandGroup pcCommandGroup--right">
                     <button className="pcCmdBtn">+ Column</button>
                 </div>
@@ -110,18 +154,11 @@ export function ProjectsPage() {
                             rows={rows}
                             columns={taskColumns}
                             ariaLabel="Project tasks list"
-                            meta={{
-                                indent: (taskId: string) =>
-                                    setRows(r => indentTask(r, taskId)),
-                                outdent: (taskId: string) =>
-                                    setRows(r => outdentTask(r, taskId)),
-                            }}
+                            meta={tableMeta}
                         />
                     )
                 ) : (
-                    <div className="pcViewPlaceholder">
-                        {activeView} view (placeholder)
-                    </div>
+                    <div className="pcViewPlaceholder">{activeView} view (placeholder)</div>
                 )}
             </div>
         </div>
