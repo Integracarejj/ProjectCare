@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { useMemo, useEffect, useRef } from 'react'
 import {
     flexRender,
@@ -8,9 +7,14 @@ import {
     type ColumnDef,
 } from '@tanstack/react-table'
 
+import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core'
+import { SortableContext } from '@dnd-kit/sortable'
+
 import './TaskTable.css'
 import { buildTaskTree, type TreeRow } from './taskTree'
 import { useTaskTableState } from './useTaskTableState'
+import { reorderTasks } from './taskDnD'
+import { SortableRow } from './SortableRow'
 
 export type TaskRow = {
     id: string
@@ -32,7 +36,7 @@ export type TaskRow = {
     createdAt?: string
 }
 
-export type TreeTaskRow = TreeRow<TaskRow>
+type TreeTaskRow = TreeRow<TaskRow>
 
 export type TaskTableMeta = {
     indent?: (taskId: string) => void
@@ -81,7 +85,6 @@ export function TaskTable({
 
     const focusedId = meta?.getFocusedRowId?.()
 
-    // Move browser focus when focused row changes
     useEffect(() => {
         if (!focusedId) return
         if (!tableRef.current) return
@@ -93,89 +96,85 @@ export function TaskTable({
         if (el) el.focus()
     }, [focusedId])
 
-    return React.createElement(
-        'table',
-        { ref: tableRef, className: 'pcTaskTable', 'aria-label': ariaLabel },
-        React.createElement(
-            'thead',
-            { className: 'pcTaskTable__head' },
-            table.getHeaderGroups().map(headerGroup =>
-                React.createElement(
-                    'tr',
-                    { key: headerGroup.id, className: 'pcTaskTable__headRow' },
-                    headerGroup.headers.map(header =>
-                        React.createElement(
-                            'th',
-                            {
-                                key: header.id,
-                                className: 'pcTaskTable__th',
-                                colSpan: header.colSpan,
-                                scope: 'col',
-                            },
-                            header.isPlaceholder
-                                ? null
-                                : flexRender(
-                                    header.column.columnDef.header,
-                                    header.getContext()
-                                )
-                        )
-                    )
-                )
-            )
-        ),
-        React.createElement(
-            'tbody',
-            { className: 'pcTaskTable__body' },
-            table.getRowModel().rows.length === 0
-                ? React.createElement(
-                    'tr',
-                    {},
-                    React.createElement(
-                        'td',
-                        {
-                            className:
-                                'pcTaskTable__td pcTaskTable__empty',
-                            colSpan: columns.length,
-                        },
-                        'No tasks yet.'
-                    )
-                )
-                : table.getRowModel().rows.map(row =>
-                    React.createElement(
-                        'tr',
-                        {
-                            key: row.id,
-                            'data-row-id': row.original.id,
-                            className: [
-                                'pcTaskTable__row',
-                                row.getIsSelected() ? 'is-selected' : '',
-                                focusedId === row.original.id
-                                    ? 'is-focused'
-                                    : '',
-                            ].join(' '),
-                            onClick: () =>
-                                meta?.setFocusedRowId?.(row.original.id),
-                        },
-                        row.getVisibleCells().map(cell =>
-                            React.createElement(
-                                'td',
-                                {
-                                    key: cell.id,
-                                    className: [
-                                        'pcTaskTable__td',
-                                        cell.column.id === 'select'
-                                            ? 'pcTaskTable__selectCell'
-                                            : '',
-                                    ].join(' '),
-                                },
-                                flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext()
-                                )
-                            )
-                        )
-                    )
-                )
-        )
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event
+        if (!active.id || !over?.id) return
+
+        const newRows = reorderTasks(rows, active.id as string, over.id as string)
+        if (newRows && meta?.setFocusedRowId) {
+            meta.setFocusedRowId(active.id as string)
+        }
+    }
+
+    return (
+        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <table ref={tableRef} className="pcTaskTable" aria-label={ariaLabel}>
+                <thead className="pcTaskTable__head">
+                    {table.getHeaderGroups().map(headerGroup => (
+                        <tr key={headerGroup.id} className="pcTaskTable__headRow">
+                            {headerGroup.headers.map(header => (
+                                <th
+                                    key={header.id}
+                                    className="pcTaskTable__th"
+                                    colSpan={header.colSpan}
+                                    scope="col"
+                                >
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                </th>
+                            ))}
+                        </tr>
+                    ))}
+                </thead>
+
+                <SortableContext items={rows.map(r => r.id)}>
+                    <tbody className="pcTaskTable__body">
+                        {table.getRowModel().rows.length === 0 ? (
+                            <tr>
+                                <td
+                                    className="pcTaskTable__td pcTaskTable__empty"
+                                    colSpan={columns.length}
+                                >
+                                    No tasks yet.
+                                </td>
+                            </tr>
+                        ) : (
+                            table.getRowModel().rows.map(row => (
+                                <SortableRow
+                                    key={row.id}
+                                    id={row.original.id}
+                                    className={[
+                                        'pcTaskTable__row',
+                                        row.getIsSelected() ? 'is-selected' : '',
+                                        focusedId === row.original.id ? 'is-focused' : '',
+                                    ].join(' ')}
+                                >
+                                    {row.getVisibleCells().map(cell => (
+                                        <td
+                                            key={cell.id}
+                                            className={[
+                                                'pcTaskTable__td',
+                                                cell.column.id === 'select'
+                                                    ? 'pcTaskTable__selectCell'
+                                                    : '',
+                                            ].join(' ')}
+                                        >
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </td>
+                                    ))}
+                                </SortableRow>
+                            ))
+                        )}
+                    </tbody>
+                </SortableContext>
+            </table>
+        </DndContext>
     )
 }

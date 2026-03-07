@@ -1,7 +1,11 @@
-
 import React, { useEffect, useRef } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
-import type { TreeTaskRow } from './TaskTable'
+import type { TaskRow as BaseTaskRow } from './TaskTable'
+import { DragHandle } from './DragHandle'
+
+export type TaskRow = BaseTaskRow
+
+type TreeTaskRow = TaskRow & { subRows?: TreeTaskRow[] }
 
 function fmtDate(value: unknown): string {
     if (typeof value !== 'string' || !value) return ''
@@ -58,36 +62,40 @@ function SelectionCell({ row }: any) {
 function TaskTitleCell({ row, table }: any) {
     const depth = row.depth
     const indent = depth * 16
+
     const meta = table.options.meta ?? {}
 
     const onClick = () => {
         if (meta.getFocusedRowId?.() === row.original.id) {
-            meta.setFocusedRowId?.(null) // toggle off focus
+            meta.setFocusedRowId?.(null)
         } else {
             meta.setFocusedRowId?.(row.original.id)
         }
     }
 
     const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-        const focusedId = meta.getFocusedRowId?.()
+        const focusedId = meta?.getFocusedRowId?.()
         if (focusedId !== row.original.id) return
 
         if (e.key === 'Tab') {
             e.preventDefault()
-            if (e.shiftKey) meta.outdent?.(row.original.id)
-            else meta.indent?.(row.original.id)
+            if (e.shiftKey) meta?.outdent?.(row.original.id)
+            else meta?.indent?.(row.original.id)
         }
+
         if (e.key === 'ArrowDown') {
             e.preventDefault()
-            meta.focusNextRow?.()
+            meta?.focusNextRow?.()
         }
+
         if (e.key === 'ArrowUp') {
             e.preventDefault()
-            meta.focusPrevRow?.()
+            meta?.focusPrevRow?.()
         }
-        if (e.key === 'Escape') {
+
+        if (e.key === 'Enter') {
             e.preventDefault()
-            meta.setFocusedRowId?.(null)
+            console.log('Edit task', row.original.id)
         }
     }
 
@@ -117,15 +125,27 @@ function TaskTitleCell({ row, table }: any) {
             onKeyDown,
         },
         toggle,
-        React.createElement('span', { className: 'pcTaskTable__taskTitle' }, row.original.title)
+        React.createElement(
+            'span',
+            { className: 'pcTaskTable__taskTitle' },
+            row.original.title
+        )
     )
 }
 
 export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
     {
+        id: 'drag',
+        header: '',
+        cell: ({ row }) => React.createElement(DragHandle, { id: row.original.id }),
+        size: 24,
+    },
+    {
         id: 'select',
-        header: ({ table }) => React.createElement(SelectionHeader, { table }),
-        cell: ({ row }) => React.createElement(SelectionCell, { row }),
+        header: ({ table }) =>
+            React.createElement(SelectionHeader, { table }),
+        cell: ({ row }) =>
+            React.createElement(SelectionCell, { row }),
         size: 40,
     },
     {
@@ -137,7 +157,8 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         id: 'task',
         header: 'Task',
         accessorKey: 'title',
-        cell: ({ row, table }) => React.createElement(TaskTitleCell, { row, table }),
+        cell: ({ row, table }) =>
+            React.createElement(TaskTitleCell, { row, table }),
     },
     {
         id: 'start',
