@@ -19,6 +19,7 @@
 .pcTaskTable__row {
     background: white;
     transition: background 120ms ease;
+    position: relative;
 }
 
 .pcTaskTable__row:hover {
@@ -33,6 +34,12 @@
     background: rgba(37, 99, 235, 0.15);
 }
 
+/* ✅ Keep the dragged row visible (ghosted), not blank */
+.pcTaskTable__row.is-dragging {
+    opacity: 0.25;
+    background: rgba(255, 255, 255, 0.9);
+}
+
 .pcTaskTable__td {
     padding: 8px 10px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
@@ -40,13 +47,6 @@
 
 .pcTaskTable__selectCell {
     width: 44px;
-}
-
-.pcTaskTable__selectHeader,
-.pcTaskTable__selectCellInner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .pcTaskTable__checkbox {
@@ -62,6 +62,10 @@
     border: 1px solid rgba(0, 0, 0, 0.2);
     background: white;
     cursor: pointer;
+}
+
+.pcTaskTable__expander:hover {
+    background: rgba(37, 99, 235, 0.06);
 }
 
 .pcTaskTable__expanderSpacer {
@@ -84,21 +88,82 @@
     display: inline-block;
 }
 
-.pcDragHandle {
-    cursor: grab;
-    opacity: .4;
-}
-
-.pcRow:hover .pcDragHandle {
-    opacity: 1;
-}
-
+/* Drag handle */
 .dragHandle {
     cursor: grab;
     user-select: none;
     padding-right: 6px;
+    opacity: 0.55;
+}
+
+.pcTaskTable__row:hover .dragHandle {
+    opacity: 1;
 }
 
 .dragHandle:active {
     cursor: grabbing;
+}
+
+/* Insertion line */
+.pcTaskTable__row.is-drop-target::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -1px;
+    height: 2px;
+    background: rgba(37, 99, 235, 0.85);
+    pointer-events: none;
+}
+
+/* Drop as child */
+.pcTaskTable__row.is-drop-parent {
+    background: rgba(37, 99, 235, 0.10);
+}
+
+.pcTaskTable__row.is-drop-parent::after {
+    content: 'Drop to nest';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: rgba(37, 99, 235, 0.95);
+    background: rgba(37, 99, 235, 0.10);
+    border: 1px solid rgba(37, 99, 235, 0.35);
+    padding: 2px 6px;
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+/* ✅ Drag overlay: show row identity (handle + Task ID + title) */
+.pcTaskTable__dragOverlayRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid rgba(17, 24, 39, 0.20);
+    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+    max-width: 520px;
+}
+
+.pcTaskTable__dragOverlayGrip {
+    opacity: 0.75;
+}
+
+.pcTaskTable__dragOverlayId {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: rgba(17, 24, 39, 0.85);
+    min-width: 42px;
+}
+
+.pcTaskTable__dragOverlayTitle {
+    font-weight: 600;
+    color: rgba(17, 24, 39, 0.85);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

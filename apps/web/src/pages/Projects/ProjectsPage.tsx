@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import './ProjectsPage.css'
-
 import { TaskTable } from '../../components/tasks/TaskTable/TaskTable'
 import { taskColumns } from '../../components/tasks/TaskTable/taskColumns'
 import type { TaskRow } from '../../components/tasks/TaskTable/TaskTable'
@@ -16,6 +15,43 @@ const VIEW_TABS: Array<{ key: ViewKey; label: string; icon: string }> = [
     { key: 'dashboard', label: 'Dashboard', icon: '📊' },
     { key: 'gantt', label: 'Gantt', icon: '📅' },
 ]
+
+/**
+ * Recompute WBS after drag/indent/outdent so Task ID reflects hierarchy.
+ * If Task ID is NOT WBS yet, you can skip calling this.
+ */
+function recomputeWbs(rows: TaskRow[]): TaskRow[] {
+    const byParent = new Map<string | null, TaskRow[]>()
+
+    for (const r of rows) {
+        const k = r.parentId ?? null
+        if (!byParent.has(k)) byParent.set(k, [])
+        byParent.get(k)!.push(r)
+    }
+
+    for (const group of byParent.values()) {
+        group.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    }
+
+    const output: TaskRow[] = []
+    const visited = new Set<string>()
+
+    function walk(parentId: string | null, prefix: string) {
+        const group = byParent.get(parentId) ?? []
+        group.forEach((r, idx) => {
+            const wbs = prefix ? `${prefix}.${idx + 1}` : `${idx + 1}`
+            // Avoid accidental cycles (defensive)
+            if (visited.has(r.id)) return
+            visited.add(r.id)
+
+            output.push({ ...r, wbs })
+            walk(r.id, wbs)
+        })
+    }
+
+    walk(null, '')
+    return output
+}
 
 export function ProjectsPage() {
     const { projectId } = useParams<{ projectId: string }>()
@@ -32,15 +68,15 @@ export function ProjectsPage() {
     // Load project + tasks
     useEffect(() => {
         if (isCreateMode || !projectId) return
-
         setLoading(true)
 
         Promise.all([getProject(projectId), getProjectTasks(projectId)])
             .then(([project, tasks]) => {
                 const taskRows = (tasks ?? []) as TaskRow[]
-
                 setProjectName(project.name ?? '')
-                setRows(taskRows)
+
+                // If you want Task ID to behave as WBS immediately:
+                setRows(recomputeWbs(taskRows))
 
                 if (taskRows.length > 0) {
                     setFocusedRowId(taskRows[0].id)
@@ -59,7 +95,7 @@ export function ProjectsPage() {
         if (!exists) setFocusedRowId(rows.length ? rows[0].id : null)
     }, [rows, focusedRowId])
 
-    // Navigation helpers
+    // Navigation helpers (flat order for now; good enough for MVP)
     const focusNextRow = () => {
         if (!focusedRowId) return
         const currentIndex = rows.findIndex(r => r.id === focusedRowId)
@@ -77,19 +113,24 @@ export function ProjectsPage() {
     const tableMeta = useMemo(() => {
         return {
             indent: (taskId: string) => {
-                setRows(r => indentTask(r, taskId))
+                setRows(r => recomputeWbs(indentTask(r, taskId)))
                 setFocusedRowId(taskId)
             },
             outdent: (taskId: string) => {
-                setRows(r => outdentTask(r, taskId))
+                setRows(r => recomputeWbs(outdentTask(r, taskId)))
                 setFocusedRowId(taskId)
             },
             getFocusedRowId: () => focusedRowId,
             setFocusedRowId: (id: string | null) => setFocusedRowId(id),
             focusNextRow,
             focusPrevRow,
+
+            // ✅ DnD persistence + ✅ WBS update
+            onRowsChange: (nextRows: TaskRow[]) => {
+                setRows(recomputeWbs(nextRows))
+            },
         }
-    }, [rows, focusedRowId])
+    }, [focusedRowId, rows])
 
     return (
         <div className="pcProjectPage">
@@ -101,12 +142,10 @@ export function ProjectsPage() {
                     onChange={e => setProjectName(e.target.value)}
                     placeholder={isCreateMode ? 'New Project Name' : 'Project Name'}
                 />
-
                 <div className="pcProjectPage__health">
                     <div className="pcHealthLabel">Project Health</div>
                     <div className="pcHealthValue">—</div>
                 </div>
-
                 <div className="pcProjectPage__actions">
                     <button className="pcIconBtn">🔔</button>
                     <button className="pcIconBtn">⬇️</button>
@@ -126,7 +165,9 @@ export function ProjectsPage() {
                             >
                                 {v.icon} {v.label}
                             </button>
-                            {idx < VIEW_TABS.length - 1 && <span className="pcViewSeparator"></span>}
+                            {idx < VIEW_TABS.length - 1 && (
+                                <span className="pcViewSeparator"></span>
+                            )}
                         </div>
                     )
                 })}

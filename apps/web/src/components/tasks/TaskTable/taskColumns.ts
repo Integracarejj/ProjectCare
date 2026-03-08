@@ -4,7 +4,6 @@ import type { TaskRow as BaseTaskRow } from './TaskTable'
 import { DragHandle } from './DragHandle'
 
 export type TaskRow = BaseTaskRow
-
 type TreeTaskRow = TaskRow & { subRows?: TreeTaskRow[] }
 
 function fmtDate(value: unknown): string {
@@ -38,6 +37,7 @@ function IndeterminateCheckbox(props: {
         disabled,
         'aria-label': ariaLabel,
         onChange,
+        onClick: (e: any) => e.stopPropagation(),
     })
 }
 
@@ -60,10 +60,16 @@ function SelectionCell({ row }: any) {
 }
 
 function TaskTitleCell({ row, table }: any) {
-    const depth = row.depth
-    const indent = depth * 16
-
     const meta = table.options.meta ?? {}
+
+    // ✅ Always derive indent from the flat model depth map (stable during drag)
+    const stableDepthMap: Map<string, number> | undefined =
+        meta.getStableDepthMap?.()
+
+    const stableDepth =
+        stableDepthMap?.get(row.original.id) ?? row.depth
+
+    const indent = stableDepth * 16
 
     const onClick = () => {
         if (meta.getFocusedRowId?.() === row.original.id) {
@@ -82,17 +88,14 @@ function TaskTitleCell({ row, table }: any) {
             if (e.shiftKey) meta?.outdent?.(row.original.id)
             else meta?.indent?.(row.original.id)
         }
-
         if (e.key === 'ArrowDown') {
             e.preventDefault()
             meta?.focusNextRow?.()
         }
-
         if (e.key === 'ArrowUp') {
             e.preventDefault()
             meta?.focusPrevRow?.()
         }
-
         if (e.key === 'Enter') {
             e.preventDefault()
             console.log('Edit task', row.original.id)
@@ -106,14 +109,18 @@ function TaskTitleCell({ row, table }: any) {
         ? React.createElement(
             'button',
             {
+                type: 'button',
                 className: 'pcTaskTable__expander',
-                onClick: row.getToggleExpandedHandler(),
+                onClick: (e: any) => {
+                    e.stopPropagation()
+                    row.toggleExpanded()
+                },
+                onMouseDown: (e: any) => e.stopPropagation(),
+                'aria-label': isExpanded ? 'Collapse row' : 'Expand row',
             },
             isExpanded ? '▾' : '▸'
         )
-        : React.createElement('span', {
-            className: 'pcTaskTable__expanderSpacer',
-        })
+        : React.createElement('span', { className: 'pcTaskTable__expanderSpacer' })
 
     return React.createElement(
         'div',
@@ -125,11 +132,7 @@ function TaskTitleCell({ row, table }: any) {
             onKeyDown,
         },
         toggle,
-        React.createElement(
-            'span',
-            { className: 'pcTaskTable__taskTitle' },
-            row.original.title
-        )
+        React.createElement('span', { className: 'pcTaskTable__taskTitle' }, row.original.title)
     )
 }
 
@@ -137,15 +140,13 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
     {
         id: 'drag',
         header: '',
-        cell: ({ row }) => React.createElement(DragHandle, { id: row.original.id }),
+        cell: () => React.createElement(DragHandle, {}),
         size: 24,
     },
     {
         id: 'select',
-        header: ({ table }) =>
-            React.createElement(SelectionHeader, { table }),
-        cell: ({ row }) =>
-            React.createElement(SelectionCell, { row }),
+        header: ({ table }) => React.createElement(SelectionHeader, { table }),
+        cell: ({ row }) => React.createElement(SelectionCell, { row }),
         size: 40,
     },
     {
@@ -157,8 +158,7 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         id: 'task',
         header: 'Task',
         accessorKey: 'title',
-        cell: ({ row, table }) =>
-            React.createElement(TaskTitleCell, { row, table }),
+        cell: ({ row, table }) => React.createElement(TaskTitleCell, { row, table }),
     },
     {
         id: 'start',
