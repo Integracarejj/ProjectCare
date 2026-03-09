@@ -26,6 +26,17 @@ function fmtDeps(value: unknown): string {
     return String(value)
 }
 
+/**
+ * Alignment helper:
+ * - We attach stable CSS class hooks via columnDef.meta
+ * - Rendering layer should apply these meta classes to <th>/<td>
+ *   (If your TaskTable already reads meta.thClassName/meta.tdClassName, this works immediately.)
+ */
+type ColumnMeta = {
+    thClassName?: string
+    tdClassName?: string
+}
+
 function IndeterminateCheckbox(props: {
     checked: boolean
     indeterminate?: boolean
@@ -76,8 +87,7 @@ function TaskTitleCell({ row, table }: any) {
     const meta = table.options.meta ?? {}
 
     // ✅ Always derive indent from the flat model depth map (stable during drag)
-    const stableDepthMap: Map<string, number> | undefined =
-        meta.getStableDepthMap?.()
+    const stableDepthMap: Map<string, number> | undefined = meta.getStableDepthMap?.()
     const stableDepth = stableDepthMap?.get(row.original.id) ?? row.depth
     const indent = stableDepth * 16
 
@@ -114,6 +124,7 @@ function TaskTitleCell({ row, table }: any) {
 
     const canExpand = row.getCanExpand()
     const isExpanded = row.getIsExpanded()
+
     const toggle = canExpand
         ? React.createElement(
             'button',
@@ -141,12 +152,20 @@ function TaskTitleCell({ row, table }: any) {
             onKeyDown,
         },
         toggle,
-        React.createElement(
-            'span',
-            { className: 'pcTaskTable__taskTitle' },
-            row.original.title
-        )
+        React.createElement('span', { className: 'pcTaskTable__taskTitle' }, row.original.title)
     )
+}
+
+// Shared alignment meta for center-aligned “numeric/status-like” columns
+const centerMeta: ColumnMeta = {
+    thClassName: 'pcTaskTable__th--center',
+    tdClassName: 'pcTaskTable__td--center',
+}
+
+// Special for checkbox column (also center, but allows narrower padding rules if desired)
+const checkboxMeta: ColumnMeta = {
+    thClassName: 'pcTaskTable__th--center pcTaskTable__th--checkbox',
+    tdClassName: 'pcTaskTable__td--center pcTaskTable__td--checkbox',
 }
 
 export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
@@ -155,12 +174,17 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         header: '',
         cell: () => React.createElement(DragHandle, {}),
         size: 24,
+        meta: {
+            thClassName: 'pcTaskTable__th--center',
+            tdClassName: 'pcTaskTable__td--center',
+        } satisfies ColumnMeta,
     },
     {
         id: 'select',
         header: ({ table }) => React.createElement(SelectionHeader, { table }),
         cell: ({ row }) => React.createElement(SelectionCell, { row }),
         size: 40,
+        meta: checkboxMeta,
     },
 
     // Core identifiers
@@ -169,22 +193,24 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         header: 'Task ID',
         accessorFn: row => row.wbs ?? row.id,
         size: 90,
+        // leave left-aligned for scanability (Excel-like)
     },
     {
         id: 'task',
         header: 'Task',
         accessorKey: 'title',
-        cell: ({ row, table }) =>
-            React.createElement(TaskTitleCell, { row, table }),
+        cell: ({ row, table }) => React.createElement(TaskTitleCell, { row, table }),
         size: 320,
+        // intentionally left-aligned
     },
 
-    // ✅ New columns based on your JSON seed fields
+    // JSON seed fields
     {
         id: 'resource',
         header: 'Resource',
         accessorKey: 'resource',
         size: 160,
+        // left aligned
     },
     {
         id: 'start',
@@ -192,6 +218,7 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         accessorKey: 'startDate',
         cell: ({ getValue }) => fmtDate(getValue()),
         size: 110,
+        meta: centerMeta,
     },
     {
         id: 'finish',
@@ -199,6 +226,7 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         accessorKey: 'finishDate',
         cell: ({ getValue }) => fmtDate(getValue()),
         size: 110,
+        meta: centerMeta,
     },
     {
         id: 'duration',
@@ -210,18 +238,21 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
             return String(v)
         },
         size: 90,
+        meta: centerMeta,
     },
     {
         id: 'status',
         header: 'Status',
         accessorKey: 'status',
         size: 120,
+        meta: centerMeta,
     },
     {
         id: 'priority',
         header: 'Priority',
         accessorKey: 'priority',
         size: 110,
+        meta: centerMeta,
     },
     {
         id: 'percentComplete',
@@ -229,12 +260,14 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         accessorKey: 'percentComplete',
         cell: ({ getValue }) => fmtPercent(getValue()),
         size: 110,
+        meta: centerMeta,
     },
     {
         id: 'type',
         header: 'Type',
         accessorKey: 'type',
         size: 100,
+        meta: centerMeta,
     },
     {
         id: 'dependencies',
@@ -242,6 +275,7 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         accessorKey: 'dependencies',
         cell: ({ getValue }) => fmtDeps(getValue()),
         size: 70,
+        meta: centerMeta,
     },
     {
         id: 'createdAt',
@@ -249,5 +283,6 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         accessorKey: 'createdAt',
         cell: ({ getValue }) => fmtDate(getValue()),
         size: 120,
+        // leave left aligned (date read is fine either way; you can center later if you want)
     },
 ]

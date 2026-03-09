@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import type { Table } from '@tanstack/react-table'
 import { flexRender } from '@tanstack/react-table'
 import './TaskTableViewport.css'
@@ -35,16 +35,19 @@ export function TaskTableViewport<TData extends { id: string }>({
                     <thead className="pcTaskTable__thead">
                         {table.getHeaderGroups().map(headerGroup => (
                             <tr key={headerGroup.id} className="pcTaskTable__headRow">
-                                {headerGroup.headers.map(header => (
-                                    <th key={header.id} className="pcTaskTable__th">
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                    </th>
-                                ))}
+                                {headerGroup.headers.map(header => {
+                                    const meta: any = header.column.columnDef.meta
+                                    const thMetaClass = meta?.thClassName ? String(meta.thClassName) : ''
+                                    const thClassName = ['pcTaskTable__th', thMetaClass].filter(Boolean).join(' ')
+
+                                    return (
+                                        <th key={header.id} className={thClassName}>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(header.column.columnDef.header, header.getContext())}
+                                        </th>
+                                    )
+                                })}
                             </tr>
                         ))}
                     </thead>
@@ -52,10 +55,7 @@ export function TaskTableViewport<TData extends { id: string }>({
                     <tbody>
                         {table.getRowModel().rows.length === 0 ? (
                             <tr>
-                                <td
-                                    className="pcTaskTable__td"
-                                    colSpan={table.getAllColumns().length}
-                                >
+                                <td className="pcTaskTable__td" colSpan={table.getAllColumns().length}>
                                     No tasks yet.
                                 </td>
                             </tr>
@@ -65,20 +65,18 @@ export function TaskTableViewport<TData extends { id: string }>({
                                 const rid = getRowId(row)
 
                                 return (
-                                    <SortableRow
-                                        key={row.id}
-                                        id={rid}
-                                        data-row-id={rid}
-                                        className={rowClassName}
-                                    >
-                                        {row.getVisibleCells().map(cell => (
-                                            <td key={cell.id} className="pcTaskTable__td">
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </td>
-                                        ))}
+                                    <SortableRow key={row.id} id={rid} data-row-id={rid} className={rowClassName}>
+                                        {row.getVisibleCells().map(cell => {
+                                            const meta: any = cell.column.columnDef.meta
+                                            const tdMetaClass = meta?.tdClassName ? String(meta.tdClassName) : ''
+                                            const tdClassName = ['pcTaskTable__td', tdMetaClass].filter(Boolean).join(' ')
+
+                                            return (
+                                                <td key={cell.id} className={tdClassName}>
+                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                </td>
+                                            )
+                                        })}
                                     </SortableRow>
                                 )
                             })

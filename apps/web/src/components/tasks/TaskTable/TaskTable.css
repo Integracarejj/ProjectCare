@@ -16,6 +16,8 @@
     padding: 10px 16px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     white-space: nowrap;
+    /* headers already appear center-aligned in your UX goals; keep default here
+     and use opt-in classes for cell alignment */
 }
 
 .pcTaskTable__row {
@@ -47,6 +49,27 @@
     vertical-align: middle;
 }
 
+/* =========================
+   Column alignment polish
+   ========================= */
+
+/* Center alignment hooks (applied per-column via columnDef.meta) */
+.pcTaskTable__th--center {
+    text-align: center;
+}
+
+.pcTaskTable__td--center {
+    text-align: center;
+}
+
+/* Checkbox column: keep the click target stable and centered */
+.pcTaskTable__th--checkbox,
+.pcTaskTable__td--checkbox {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Keep checkbox from stretching cells */
 .pcTaskTable__checkbox {
     width: 14px;
     height: 14px;
