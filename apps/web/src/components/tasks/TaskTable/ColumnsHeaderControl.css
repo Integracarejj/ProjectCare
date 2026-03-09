@@ -1,0 +1,115 @@
+.pcColCtl {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.pcColCtl__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(17, 24, 39, 0.14);
+    background: #ffffff;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(17, 24, 39, 0.85);
+}
+
+.pcColCtl__btn:hover {
+    background: rgba(37, 99, 235, 0.06);
+    border-color: rgba(37, 99, 235, 0.25);
+}
+
+.pcColCtl__chev {
+    opacity: 0.75;
+}
+
+.pcColCtl__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 220px;
+    max-width: 280px;
+    background: #ffffff;
+    border: 1px solid rgba(17, 24, 39, 0.14);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+    padding: 10px;
+    z-index: 100;
+}
+
+.pcColCtl__menuTop {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+    margin-bottom: 10px;
+}
+
+.pcColCtl__miniBtn {
+    border: 1px solid rgba(17, 24, 39, 0.14);
+    background: #fff;
+    border-radius: 8px;
+    padding: 5px 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.pcColCtl__miniBtn:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.pcColCtl__section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.pcColCtl__sectionTitle {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(17, 24, 39, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-top: 2px;
+}
+
+.pcColCtl__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: rgba(17, 24, 39, 0.86);
+    padding: 4px 6px;
+    border-radius: 8px;
+}
+
+.pcColCtl__item:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.pcColCtl__label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pcColCtl__empty {
+    font-size: 12px;
+    color: rgba(17, 24, 39, 0.55);
+    padding: 4px 6px;
+}
+
+.pcColCtl__hint {
+    font-size: 11px;
+    color: rgba(17, 24, 39, 0.55);
+    padding-top: 6px;
+    border-top: 1px solid rgba(17, 24, 39, 0.08);
+}

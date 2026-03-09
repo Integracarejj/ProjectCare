@@ -1,11 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import './ProjectsPage.css'
+
 import { TaskTable } from '../../components/tasks/TaskTable/TaskTable'
 import { taskColumns } from '../../components/tasks/TaskTable/taskColumns'
 import type { TaskRow } from '../../components/tasks/TaskTable/TaskTable'
 import { indentTask, outdentTask } from '../../components/tasks/TaskTable/taskIndentOutdent'
 import { getProject, getProjectTasks } from '../../data/projectsApi'
+
+// NEW (modular column UX)
+import type { ColumnDef } from '@tanstack/react-table'
+import { ColumnsHeaderControl } from '../../components/tasks/TaskTable/ColumnsHeaderControl.tsx'
 
 type ViewKey = 'list' | 'board' | 'dashboard' | 'gantt'
 
@@ -22,13 +27,11 @@ const VIEW_TABS: Array<{ key: ViewKey; label: string; icon: string }> = [
  */
 function recomputeWbs(rows: TaskRow[]): TaskRow[] {
     const byParent = new Map<string | null, TaskRow[]>()
-
     for (const r of rows) {
         const k = r.parentId ?? null
         if (!byParent.has(k)) byParent.set(k, [])
         byParent.get(k)!.push(r)
     }
-
     for (const group of byParent.values()) {
         group.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     }
@@ -43,7 +46,6 @@ function recomputeWbs(rows: TaskRow[]): TaskRow[] {
             // Avoid accidental cycles (defensive)
             if (visited.has(r.id)) return
             visited.add(r.id)
-
             output.push({ ...r, wbs })
             walk(r.id, wbs)
         })
@@ -74,10 +76,8 @@ export function ProjectsPage() {
             .then(([project, tasks]) => {
                 const taskRows = (tasks ?? []) as TaskRow[]
                 setProjectName(project.name ?? '')
-
                 // If you want Task ID to behave as WBS immediately:
                 setRows(recomputeWbs(taskRows))
-
                 if (taskRows.length > 0) {
                     setFocusedRowId(taskRows[0].id)
                 }
@@ -102,7 +102,6 @@ export function ProjectsPage() {
         const next = rows[currentIndex + 1]
         if (next) setFocusedRowId(next.id)
     }
-
     const focusPrevRow = () => {
         if (!focusedRowId) return
         const currentIndex = rows.findIndex(r => r.id === focusedRowId)
@@ -124,13 +123,32 @@ export function ProjectsPage() {
             setFocusedRowId: (id: string | null) => setFocusedRowId(id),
             focusNextRow,
             focusPrevRow,
-
             // ✅ DnD persistence + ✅ WBS update
             onRowsChange: (nextRows: TaskRow[]) => {
                 setRows(recomputeWbs(nextRows))
             },
         }
     }, [focusedRowId, rows])
+
+    /**
+     * Column UX enhancement:
+     * - We add a dedicated last column that hosts the header "Columns ▾" control.
+     * - It is a pure header utility column (cells are empty).
+     * - Sticky-right behavior is applied via column meta classes.
+     */
+    const columnsWithControl = useMemo(() => {
+        const controlCol: ColumnDef<any, any> = {
+            id: 'colActions',
+            header: ({ table }) => <ColumnsHeaderControl table={table as any} />,
+            cell: () => null,
+            size: 56,
+            meta: {
+                thClassName: 'pcTaskTable__th--stickyRight pcTaskTable__th--colActions',
+                tdClassName: 'pcTaskTable__td--stickyRight pcTaskTable__td--colActions',
+            },
+        }
+        return [...(taskColumns as any), controlCol] as any
+    }, [])
 
     return (
         <div className="pcProjectPage">
@@ -165,23 +183,18 @@ export function ProjectsPage() {
                             >
                                 {v.icon} {v.label}
                             </button>
-                            {idx < VIEW_TABS.length - 1 && (
-                                <span className="pcViewSeparator"></span>
-                            )}
+                            {idx < VIEW_TABS.length - 1 && <span className="pcViewSeparator"></span>}
                         </div>
                     )
                 })}
             </div>
 
-            {/* Command Bar */}
+            {/* Command Bar (Removed + Column; column UX now lives in the table header) */}
             <div className="pcProjectPage__commandBar">
                 <div className="pcCommandGroup">
                     <button className="pcCmdIcon">🔍</button>
                     <button className="pcCmdIcon">⌕</button>
                     <button className="pcCmdIcon">☰</button>
-                </div>
-                <div className="pcCommandGroup pcCommandGroup--right">
-                    <button className="pcCmdBtn">+ Column</button>
                 </div>
             </div>
 
@@ -193,7 +206,7 @@ export function ProjectsPage() {
                     ) : (
                         <TaskTable
                             rows={rows}
-                            columns={taskColumns}
+                            columns={columnsWithControl}
                             ariaLabel="Project tasks list"
                             meta={tableMeta}
                         />

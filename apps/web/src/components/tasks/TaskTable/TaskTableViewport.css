@@ -3,11 +3,9 @@
    - Provides a dedicated scroll surface (vertical + horizontal)
    - Sticky header works reliably inside this viewport
    ========================================================================== */
-
 .pcTaskViewport {
     /* You can tune this from a parent with a CSS variable later if desired */
     --pcTaskViewportHeight: calc(100vh - 300px);
-
     border: 1px solid rgba(0, 0, 0, 0.10);
     border-radius: 12px;
     background: #ffffff;
@@ -35,7 +33,6 @@
     text-align: center;
     font-weight: 600;
     white-space: nowrap;
-
     position: relative;
 }
 
@@ -57,4 +54,32 @@
 /* Slight shadow under the sticky header so it reads while scrolling */
 .pcTaskTable__thead .pcTaskTable__th {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+/* ==========================================================================
+   Sticky-right utility column (Columns ▾)
+   ========================================================================== */
+.pcTaskTable__th--stickyRight {
+    position: sticky;
+    right: 0;
+    z-index: 30;
+    /* above header row and separators */
+    background: #f8fafc;
+    box-shadow: -1px 0 0 rgba(17, 24, 39, 0.10);
+}
+
+.pcTaskTable__td--stickyRight {
+    position: sticky;
+    right: 0;
+    z-index: 6;
+    /* above row background, below header */
+    background: #ffffff;
+    box-shadow: -1px 0 0 rgba(17, 24, 39, 0.06);
+}
+
+/* Utility column sizing + padding (kept subtle) */
+.pcTaskTable__th--colActions,
+.pcTaskTable__td--colActions {
+    padding-left: 8px;
+    padding-right: 8px;
 }

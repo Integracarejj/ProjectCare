@@ -17,7 +17,6 @@ import {
     useSensors,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-
 import './TaskTable.css'
 import { buildTaskTree, type TreeRow } from './taskTree'
 import { useTaskTableState } from './useTaskTableState'
@@ -28,18 +27,9 @@ export type TaskRow = {
     id: string
     projectId: string
     parentId: string | null
-
     wbs?: string
     title: string
-
-    status?:
-    | 'Backlog'
-    | 'Not Started'
-    | 'In Progress'
-    | 'Blocked'
-    | 'Complete'
-    | string
-
+    status?: 'Backlog' | 'Not Started' | 'In Progress' | 'Blocked' | 'Complete' | string
     type?: 'summary' | 'task' | string
     priority?: 'Low' | 'Medium' | 'High' | 'Urgent' | string
     resource?: string | null
@@ -48,7 +38,6 @@ export type TaskRow = {
     finishDate?: string | null
     duration?: number | null
     dependencies?: string[] | null
-
     order?: number
     isMilestone?: boolean
     createdAt?: string
@@ -59,14 +48,11 @@ type TreeTaskRow = TreeRow<TaskRow>
 export type TaskTableMeta = {
     indent?: (taskId: string) => void
     outdent?: (taskId: string) => void
-
     getFocusedRowId?: () => string | null
     setFocusedRowId?: (id: string | null) => void
     focusNextRow?: () => void
     focusPrevRow?: () => void
-
     onRowsChange?: (nextRows: TaskRow[]) => void
-
     // stable depth derived from flat rows
     getStableDepthMap?: () => Map<string, number>
 }
@@ -101,14 +87,15 @@ type TaskTableProps = {
     meta?: TaskTableMeta
 }
 
-export function TaskTable({
-    rows,
-    columns,
-    ariaLabel = 'Tasks table',
-    meta,
-}: TaskTableProps) {
-    const { expanded, setExpanded, rowSelection, setRowSelection } =
-        useTaskTableState()
+export function TaskTable({ rows, columns, ariaLabel = 'Tasks table', meta }: TaskTableProps) {
+    const {
+        expanded,
+        setExpanded,
+        rowSelection,
+        setRowSelection,
+        columnVisibility,
+        setColumnVisibility,
+    } = useTaskTableState()
 
     const treeRows = useMemo(() => buildTaskTree(rows), [rows])
 
@@ -118,9 +105,7 @@ export function TaskTable({
 
     const stableDepthMap = useMemo(() => computeStableDepthMap(rows), [rows])
 
-    const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
-    )
+    const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
 
     const composedMeta: TaskTableMeta = useMemo(() => {
         return {
@@ -133,9 +118,10 @@ export function TaskTable({
         data: treeRows,
         columns,
         meta: composedMeta,
-        state: { expanded, rowSelection },
+        state: { expanded, rowSelection, columnVisibility },
         onExpandedChange: setExpanded,
         onRowSelectionChange: setRowSelection,
+        onColumnVisibilityChange: setColumnVisibility,
         getRowId: row => row.id,
         getSubRows: row => row.subRows ?? [],
         getCoreRowModel: getCoreRowModel(),
@@ -179,13 +165,10 @@ export function TaskTable({
     const onDragEnd = (event: DragEndEvent) => {
         const aId = event.active?.id ? String(event.active.id) : null
         const oId = event.over?.id ? String(event.over.id) : null
-
         setActiveId(null)
         setOverId(null)
-
         if (!aId || !oId) return
         if (aId === oId) return
-
         const nextRows = moveTask(rows, aId, oId)
         composedMeta?.onRowsChange?.(nextRows)
         composedMeta?.setFocusedRowId?.(aId)
@@ -204,7 +187,6 @@ export function TaskTable({
         const isSelected = row.getIsSelected()
         const isOver = overId === row.original.id
         const isActive = activeId === row.original.id
-
         return [
             'pcTaskTable__row',
             isSelected ? 'is-selected' : '',
@@ -227,27 +209,19 @@ export function TaskTable({
                 onDragEnd={onDragEnd}
                 onDragCancel={onDragCancel}
             >
-                <SortableContext
-                    items={visibleRowIds}
-                    strategy={verticalListSortingStrategy}
-                >
+                <SortableContext items={visibleRowIds} strategy={verticalListSortingStrategy}>
                     <TaskTableViewport
                         table={table as any}
                         ariaLabel={ariaLabel}
                         getRowClassName={getRowClassName}
                         getRowId={(row: any) => row.original.id}
                     />
-
                     <DragOverlay>
                         {activeRow ? (
                             <div className="pcTaskTable__dragOverlayRow">
                                 <span className="pcTaskTable__dragOverlayGrip">☰</span>
-                                <span className="pcTaskTable__dragOverlayId">
-                                    {activeRow.wbs ?? activeRow.id}
-                                </span>
-                                <span className="pcTaskTable__dragOverlayTitle">
-                                    {activeRow.title}
-                                </span>
+                                <span className="pcTaskTable__dragOverlayId">{activeRow.wbs ?? activeRow.id}</span>
+                                <span className="pcTaskTable__dragOverlayTitle">{activeRow.title}</span>
                             </div>
                         ) : null}
                     </DragOverlay>
