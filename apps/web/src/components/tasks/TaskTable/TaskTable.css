@@ -1,13 +1,7 @@
-.pcTaskTable__scroll {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-}
-
 .pcTaskTable {
     width: 100%;
     min-width: 1180px;
-    /* enough room for the new columns */
+    /* still supports your new columns */
     border-collapse: separate;
     border-spacing: 0;
     font-size: 13px;
@@ -18,10 +12,9 @@
 }
 
 .pcTaskTable__th {
-    text-align: left;
     font-weight: 600;
-    padding: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     white-space: nowrap;
 }
 
@@ -43,7 +36,6 @@
     background: rgba(37, 99, 235, 0.15);
 }
 
-/* ✅ Keep the dragged row visible (ghosted), not blank */
 .pcTaskTable__row.is-dragging {
     opacity: 0.25;
     background: rgba(255, 255, 255, 0.9);
@@ -53,10 +45,6 @@
     padding: 8px 10px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     vertical-align: middle;
-}
-
-.pcTaskTable__selectCell {
-    width: 44px;
 }
 
 .pcTaskTable__checkbox {
@@ -94,11 +82,6 @@
     outline: 2px solid rgba(37, 99, 235, 0.35);
 }
 
-.pcTaskTable__taskTitle {
-    display: inline-block;
-}
-
-/* Drag handle */
 .dragHandle {
     cursor: grab;
     user-select: none;
@@ -114,7 +97,6 @@
     cursor: grabbing;
 }
 
-/* Insertion line */
 .pcTaskTable__row.is-drop-target::before {
     content: '';
     position: absolute;
@@ -126,7 +108,6 @@
     pointer-events: none;
 }
 
-/* Drop as child */
 .pcTaskTable__row.is-drop-parent {
     background: rgba(37, 99, 235, 0.10);
 }
@@ -146,7 +127,6 @@
     pointer-events: none;
 }
 
-/* ✅ Drag overlay: show row identity (handle + Task ID + title) */
 .pcTaskTable__dragOverlayRow {
     display: inline-flex;
     align-items: center;

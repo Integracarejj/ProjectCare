@@ -1,0 +1,60 @@
+/* ==========================================================================
+   TaskTableViewport
+   - Provides a dedicated scroll surface (vertical + horizontal)
+   - Sticky header works reliably inside this viewport
+   ========================================================================== */
+
+.pcTaskViewport {
+    /* You can tune this from a parent with a CSS variable later if desired */
+    --pcTaskViewportHeight: calc(100vh - 300px);
+
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 12px;
+    background: #ffffff;
+    overflow: hidden;
+    /* keeps rounded corners clean */
+}
+
+/* The actual scroll surface */
+.pcTaskViewport__scroll {
+    max-height: var(--pcTaskViewportHeight);
+    overflow: auto;
+    /* ✅ vertical + horizontal scroll here */
+}
+
+/* Sticky header inside the viewport */
+.pcTaskTable__thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Header cells: centered + subtle separators */
+.pcTaskTable__th {
+    background: #f8fafc;
+    text-align: center;
+    font-weight: 600;
+    white-space: nowrap;
+
+    position: relative;
+}
+
+/* Subtle column dividers in the header */
+.pcTaskTable__th:not(:last-child) {
+    padding-right: 22px;
+}
+
+.pcTaskTable__th:not(:last-child)::after {
+    content: '|';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(17, 24, 39, 0.22);
+    pointer-events: none;
+}
+
+/* Slight shadow under the sticky header so it reads while scrolling */
+.pcTaskTable__thead .pcTaskTable__th {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+}
