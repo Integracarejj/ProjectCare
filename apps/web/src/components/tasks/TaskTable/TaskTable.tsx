@@ -17,10 +17,8 @@ import {
     useSensor,
     useSensors,
 } from '@dnd-kit/core'
-import {
-    SortableContext,
-    verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+
 import './TaskTable.css'
 import { buildTaskTree, type TreeRow } from './taskTree'
 import { useTaskTableState } from './useTaskTableState'
@@ -31,17 +29,28 @@ export type TaskRow = {
     id: string
     projectId: string
     parentId: string | null
+
     wbs?: string
     title: string
-    status:
+
+    status?:
     | 'Backlog'
     | 'Not Started'
     | 'In Progress'
     | 'Blocked'
     | 'Complete'
     | string
+
+    // ✅ New/extended fields used by columns (safe as optional)
+    type?: 'summary' | 'task' | string
+    priority?: 'Low' | 'Medium' | 'High' | 'Urgent' | string
+    resource?: string | null
+    percentComplete?: number | null
     startDate?: string | null
     finishDate?: string | null
+    duration?: number | null
+    dependencies?: string[] | null
+
     order?: number
     isMilestone?: boolean
     createdAt?: string
@@ -52,27 +61,19 @@ type TreeTaskRow = TreeRow<TaskRow>
 export type TaskTableMeta = {
     indent?: (taskId: string) => void
     outdent?: (taskId: string) => void
+
     getFocusedRowId?: () => string | null
     setFocusedRowId?: (id: string | null) => void
     focusNextRow?: () => void
     focusPrevRow?: () => void
 
-    // Persist state upward (ProjectsPage owns rows)
     onRowsChange?: (nextRows: TaskRow[]) => void
 
-    // ✅ NEW: stable depth derived from flat rows (prevents “slide right” during drag)
+    // ✅ stable depth derived from flat rows (prevents “slide right” during drag)
     getStableDepthMap?: () => Map<string, number>
 }
 
-type TaskTableProps = {
-    rows: TaskRow[]
-    columns: ColumnDef<TreeTaskRow, unknown>[]
-    ariaLabel?: string
-    meta?: TaskTableMeta
-}
-
 // Compute stable depth strictly from the flat model (parentId chain).
-// This will NOT change during drag (only changes after drop when parentId updates).
 function computeStableDepthMap(rows: TaskRow[]): Map<string, number> {
     const parentById = new Map<string, string | null>()
     for (const r of rows) parentById.set(r.id, r.parentId ?? null)
@@ -84,8 +85,10 @@ function computeStableDepthMap(rows: TaskRow[]): Map<string, number> {
         if (memo.has(id)) return memo.get(id)!
         if (visiting.has(id)) return 0 // cycle guard
         visiting.add(id)
+
         const pid = parentById.get(id) ?? null
         const d = pid ? depthOf(pid) + 1 : 0
+
         visiting.delete(id)
         memo.set(id, d)
         return d
@@ -94,6 +97,13 @@ function computeStableDepthMap(rows: TaskRow[]): Map<string, number> {
     const out = new Map<string, number>()
     for (const r of rows) out.set(r.id, depthOf(r.id))
     return out
+}
+
+type TaskTableProps = {
+    rows: TaskRow[]
+    columns: ColumnDef<TreeTaskRow, any>[]
+    ariaLabel?: string
+    meta?: TaskTableMeta
 }
 
 export function TaskTable({
@@ -145,13 +155,12 @@ export function TaskTable({
         enableSubRowSelection: false,
     })
 
-    const focusedId = composedMeta?.getFocusedRowId?.()
+    const focusedId = composedMeta?.getFocusedRowId?.() ?? null
 
     // Keep keyboard focus aligned with our “focusedRowId” anchor
     useEffect(() => {
         if (!focusedId) return
-        if (!tableRef.current) return
-        const el = tableRef.current.querySelector(
+        const el = tableRef.current?.querySelector(
             `[data-row-id="${focusedId}"] .pcTaskTable__taskCell`
         ) as HTMLElement | null
         if (el) el.focus()
@@ -209,106 +218,93 @@ export function TaskTable({
             onDragEnd={onDragEnd}
             onDragCancel={onDragCancel}
         >
-            <table ref={tableRef} className="pcTaskTable" aria-label={ariaLabel}>
-                <thead className="pcTaskTable__head">
-                    {table.getHeaderGroups().map(headerGroup => (
-                        <tr key={headerGroup.id} className="pcTaskTable__headRow">
-                            {headerGroup.headers.map(header => (
-                                <th
-                                    key={header.id}
-                                    className="pcTaskTable__th"
-                                    colSpan={header.colSpan}
-                                    scope="col"
-                                >
-                                    {header.isPlaceholder
-                                        ? null
-                                        : flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                </th>
-                            ))}
-                        </tr>
-                    ))}
-                </thead>
-
-                <SortableContext
-                    items={visibleRowIds}
-                    strategy={verticalListSortingStrategy}
-                >
-                    <tbody className="pcTaskTable__body">
-                        {table.getRowModel().rows.length === 0 ? (
-                            <tr>
-                                <td
-                                    className="pcTaskTable__td pcTaskTable__empty"
-                                    colSpan={columns.length}
-                                >
-                                    No tasks yet.
-                                </td>
-                            </tr>
-                        ) : (
-                            table.getRowModel().rows.map(row => {
-                                const isFocused = focusedId === row.original.id
-                                const isSelected = row.getIsSelected()
-                                const isOver = overId === row.original.id
-                                const isActive = activeId === row.original.id
-
-                                const rowClassName = [
-                                    'pcTaskTable__row',
-                                    isSelected ? 'is-selected' : '',
-                                    isFocused ? 'is-focused' : '',
-                                    isOver ? 'is-drop-target' : '',
-                                    isOver && isOverSummary ? 'is-drop-parent' : '',
-                                    isActive ? 'is-dragging' : '',
-                                ]
-                                    .filter(Boolean)
-                                    .join(' ')
-
-                                return (
-                                    <SortableRow
-                                        key={row.id}
-                                        id={row.original.id}
-                                        className={rowClassName}
-                                        data-row-id={row.original.id}
-                                    >
-                                        {row.getVisibleCells().map(cell => (
-                                            <td
-                                                key={cell.id}
-                                                className={[
-                                                    'pcTaskTable__td',
-                                                    cell.column.id === 'select'
-                                                        ? 'pcTaskTable__selectCell'
-                                                        : '',
-                                                ].join(' ')}
-                                            >
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
+            <SortableContext
+                items={visibleRowIds}
+                strategy={verticalListSortingStrategy}
+            >
+                {/* ✅ Horizontal scroll wrapper (safe, incremental) */}
+                <div className="pcTaskTable__scroll">
+                    <table className="pcTaskTable" ref={tableRef} aria-label={ariaLabel}>
+                        <thead>
+                            {table.getHeaderGroups().map(headerGroup => (
+                                <tr key={headerGroup.id} className="pcTaskTable__headRow">
+                                    {headerGroup.headers.map(header => (
+                                        <th key={header.id} className="pcTaskTable__th">
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
                                                 )}
-                                            </td>
-                                        ))}
-                                    </SortableRow>
-                                )
-                            })
-                        )}
-                    </tbody>
-                </SortableContext>
-            </table>
+                                        </th>
+                                    ))}
+                                </tr>
+                            ))}
+                        </thead>
 
-            {/* Overlay: show the row identity (handle + Task ID + title) */}
-            <DragOverlay>
-                {activeRow ? (
-                    <div className="pcTaskTable__dragOverlayRow" role="presentation">
-                        <span className="pcTaskTable__dragOverlayGrip">☰</span>
-                        <span className="pcTaskTable__dragOverlayId">
-                            {activeRow.wbs ?? activeRow.id}
-                        </span>
-                        <span className="pcTaskTable__dragOverlayTitle">
-                            {activeRow.title}
-                        </span>
-                    </div>
-                ) : null}
-            </DragOverlay>
+                        <tbody>
+                            {table.getRowModel().rows.length === 0 ? (
+                                <tr>
+                                    <td className="pcTaskTable__td" colSpan={table.getAllColumns().length}>
+                                        No tasks yet.
+                                    </td>
+                                </tr>
+                            ) : (
+                                table.getRowModel().rows.map(row => {
+                                    const isFocused = focusedId === row.original.id
+                                    const isSelected = row.getIsSelected()
+                                    const isOver = overId === row.original.id
+                                    const isActive = activeId === row.original.id
+
+                                    const rowClassName = [
+                                        'pcTaskTable__row',
+                                        isSelected ? 'is-selected' : '',
+                                        isFocused ? 'is-focused' : '',
+                                        isOver ? 'is-drop-target' : '',
+                                        isOver && isOverSummary ? 'is-drop-parent' : '',
+                                        isActive ? 'is-dragging' : '',
+                                    ]
+                                        .filter(Boolean)
+                                        .join(' ')
+
+                                    return (
+                                        <SortableRow
+                                            key={row.id}
+                                            id={row.original.id}
+                                            data-row-id={row.original.id}
+                                            className={rowClassName}
+                                        >
+                                            {row.getVisibleCells().map(cell => (
+                                                <td key={cell.id} className="pcTaskTable__td">
+                                                    {flexRender(
+                                                        cell.column.columnDef.cell,
+                                                        cell.getContext()
+                                                    )}
+                                                </td>
+                                            ))}
+                                        </SortableRow>
+                                    )
+                                })
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Overlay: show row identity (handle + Task ID + title) */}
+                <DragOverlay>
+                    {activeRow ? (
+                        <div className="pcTaskTable__dragOverlayRow">
+                            <span className="pcTaskTable__dragOverlayGrip">☰</span>
+                            <span className="pcTaskTable__dragOverlayId">
+                                {activeRow.wbs ?? activeRow.id}
+                            </span>
+                            <span className="pcTaskTable__dragOverlayTitle">
+                                {activeRow.title}
+                            </span>
+                        </div>
+                    ) : null}
+                </DragOverlay>
+            </SortableContext>
         </DndContext>
     )
 }

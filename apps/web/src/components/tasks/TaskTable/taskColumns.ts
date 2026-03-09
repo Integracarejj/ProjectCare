@@ -9,8 +9,21 @@ type TreeTaskRow = TaskRow & { subRows?: TreeTaskRow[] }
 function fmtDate(value: unknown): string {
     if (typeof value !== 'string' || !value) return ''
     const d = new Date(value)
-    if (Number.isNaN(d.getTime())) return value
+    if (Number.isNaN(d.getTime())) return String(value)
     return d.toLocaleDateString()
+}
+
+function fmtPercent(value: unknown): string {
+    if (value === null || value === undefined || value === '') return ''
+    const n = typeof value === 'number' ? value : Number(value)
+    if (Number.isNaN(n)) return String(value)
+    return `${Math.max(0, Math.min(100, Math.round(n)))}%`
+}
+
+function fmtDeps(value: unknown): string {
+    if (!value) return ''
+    if (Array.isArray(value)) return value.length ? `${value.length}` : ''
+    return String(value)
 }
 
 function IndeterminateCheckbox(props: {
@@ -65,10 +78,7 @@ function TaskTitleCell({ row, table }: any) {
     // ✅ Always derive indent from the flat model depth map (stable during drag)
     const stableDepthMap: Map<string, number> | undefined =
         meta.getStableDepthMap?.()
-
-    const stableDepth =
-        stableDepthMap?.get(row.original.id) ?? row.depth
-
+    const stableDepth = stableDepthMap?.get(row.original.id) ?? row.depth
     const indent = stableDepth * 16
 
     const onClick = () => {
@@ -79,7 +89,7 @@ function TaskTitleCell({ row, table }: any) {
         }
     }
 
-    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const onKeyDown = (e: React.KeyboardEvent) => {
         const focusedId = meta?.getFocusedRowId?.()
         if (focusedId !== row.original.id) return
 
@@ -104,7 +114,6 @@ function TaskTitleCell({ row, table }: any) {
 
     const canExpand = row.getCanExpand()
     const isExpanded = row.getIsExpanded()
-
     const toggle = canExpand
         ? React.createElement(
             'button',
@@ -132,7 +141,11 @@ function TaskTitleCell({ row, table }: any) {
             onKeyDown,
         },
         toggle,
-        React.createElement('span', { className: 'pcTaskTable__taskTitle' }, row.original.title)
+        React.createElement(
+            'span',
+            { className: 'pcTaskTable__taskTitle' },
+            row.original.title
+        )
     )
 }
 
@@ -149,32 +162,92 @@ export const taskColumns: ColumnDef<TreeTaskRow, unknown>[] = [
         cell: ({ row }) => React.createElement(SelectionCell, { row }),
         size: 40,
     },
+
+    // Core identifiers
     {
         id: 'taskId',
         header: 'Task ID',
         accessorFn: row => row.wbs ?? row.id,
+        size: 90,
     },
     {
         id: 'task',
         header: 'Task',
         accessorKey: 'title',
-        cell: ({ row, table }) => React.createElement(TaskTitleCell, { row, table }),
+        cell: ({ row, table }) =>
+            React.createElement(TaskTitleCell, { row, table }),
+        size: 320,
+    },
+
+    // ✅ New columns based on your JSON seed fields
+    {
+        id: 'resource',
+        header: 'Resource',
+        accessorKey: 'resource',
+        size: 160,
     },
     {
         id: 'start',
         header: 'Start',
         accessorKey: 'startDate',
         cell: ({ getValue }) => fmtDate(getValue()),
+        size: 110,
     },
     {
         id: 'finish',
         header: 'Finish',
         accessorKey: 'finishDate',
         cell: ({ getValue }) => fmtDate(getValue()),
+        size: 110,
+    },
+    {
+        id: 'duration',
+        header: 'Duration',
+        accessorKey: 'duration',
+        cell: ({ getValue }) => {
+            const v = getValue() as any
+            if (v === null || v === undefined || v === '') return ''
+            return String(v)
+        },
+        size: 90,
     },
     {
         id: 'status',
         header: 'Status',
         accessorKey: 'status',
+        size: 120,
+    },
+    {
+        id: 'priority',
+        header: 'Priority',
+        accessorKey: 'priority',
+        size: 110,
+    },
+    {
+        id: 'percentComplete',
+        header: '% Complete',
+        accessorKey: 'percentComplete',
+        cell: ({ getValue }) => fmtPercent(getValue()),
+        size: 110,
+    },
+    {
+        id: 'type',
+        header: 'Type',
+        accessorKey: 'type',
+        size: 100,
+    },
+    {
+        id: 'dependencies',
+        header: 'Deps',
+        accessorKey: 'dependencies',
+        cell: ({ getValue }) => fmtDeps(getValue()),
+        size: 70,
+    },
+    {
+        id: 'createdAt',
+        header: 'Created',
+        accessorKey: 'createdAt',
+        cell: ({ getValue }) => fmtDate(getValue()),
+        size: 120,
     },
 ]

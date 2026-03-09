@@ -1,5 +1,13 @@
+.pcTaskTable__scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
 .pcTaskTable {
     width: 100%;
+    min-width: 1180px;
+    /* enough room for the new columns */
     border-collapse: separate;
     border-spacing: 0;
     font-size: 13px;
@@ -14,6 +22,7 @@
     font-weight: 600;
     padding: 10px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
 }
 
 .pcTaskTable__row {
@@ -43,6 +52,7 @@
 .pcTaskTable__td {
     padding: 8px 10px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    vertical-align: middle;
 }
 
 .pcTaskTable__selectCell {
